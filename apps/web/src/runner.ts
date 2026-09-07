@@ -3,10 +3,10 @@ import { crawlAndPersistAll, type CrawlRunResult } from "../../crawler/src/persi
 
 const INTERVAL_MS = 10 * 60 * 1000; // 10분마다 재수집
 
-// 9/8 오전 10시 전까지는 uwayapply 대학들도 접수 시작 전이라 크롤링해봐야 "링크 없음"만 반복된다.
+// 국민대·경기대·인하대(uwayapply)는 이미 9/7부터 접수 중이라 시작 게이트를 걸어둘 이유가 없다.
+// (아직 안 열린 대학은 resolveTargets에서 알아서 "링크 없음"으로 건너뛰므로 이 이상의 전역 대기는 불필요)
 // 9/11 20시(원서접수 마감 근처)가 지나면 더 이상 크롤링할 필요가 없어 자동으로 멈춘다.
-// 둘 다 "매일 반복"이 아니라 이번 수시 접수 기간에 한정된 특정 시각이다.
-const CRAWL_START_AT = kstToUtcDate(2026, 9, 8, 10, 0);
+const CRAWL_START_AT = kstToUtcDate(2020, 1, 1, 0, 0); // 이미 지난 시각 = 시작 게이트 사실상 없음
 const CRAWL_END_AT = kstToUtcDate(2026, 9, 11, 20, 0);
 
 let timer: NodeJS.Timeout | null = null;
@@ -41,7 +41,7 @@ async function tick(opts: { force?: boolean } = {}) {
 
   if (isBeforeStart(now) && !opts.force) {
     lastSkippedReason = "before-start";
-    console.log(`[crawl] ${now.toISOString()} - 시작 시각(9/8 10:00 KST) 전이라 이번 주기는 건너뜀`);
+    console.log(`[crawl] ${now.toISOString()} - 시작 시각 전이라 이번 주기는 건너뜀`);
     return;
   }
 
