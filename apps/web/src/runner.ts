@@ -1,4 +1,4 @@
-import { crawlAndPersistAll } from "../../crawler/src/persist.js";
+import { crawlAndPersistAll, type CrawlRunResult } from "../../crawler/src/persist.js";
 
 const INTERVAL_MS = 10 * 60 * 1000; // 10분마다 재수집
 
@@ -12,6 +12,7 @@ let inFlight = false;
 let lastRunAt: Date | null = null;
 let lastResultSummary: string | null = null;
 let lastSkippedQuietHours = false;
+let lastResults: CrawlRunResult[] = [];
 
 function isQuietHours(now: Date): boolean {
   return now.getHours() < QUIET_HOUR_BEFORE;
@@ -32,11 +33,15 @@ async function tick() {
   try {
     const results = await crawlAndPersistAll();
     lastRunAt = new Date();
+    lastResults = results;
     const ok = results.filter((r) => r.status === "ok").length;
     const skipped = results.filter((r) => r.status === "skipped").length;
-    const error = results.filter((r) => r.status === "error").length;
-    lastResultSummary = `성공 ${ok} / 대기 ${skipped} / 실패 ${error}`;
+    const errors = results.filter((r) => r.status === "error");
+    lastResultSummary = `성공 ${ok} / 대기 ${skipped} / 실패 ${errors.length}`;
     console.log(`[crawl] ${lastRunAt.toISOString()} - ${lastResultSummary}`);
+    for (const e of errors) {
+      console.error(`[crawl] 실패: ${e.target} - ${e.detail}`);
+    }
   } catch (err) {
     console.error("[crawl] 실행 중 오류:", err);
   } finally {
@@ -69,5 +74,6 @@ export function getCrawlStatus() {
     lastSkippedQuietHours,
     lastRunAt: lastRunAt ? lastRunAt.toISOString() : null,
     lastResultSummary,
+    lastErrors: lastResults.filter((r) => r.status === "error"),
   };
 }
