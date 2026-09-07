@@ -10,13 +10,6 @@ function fmt(dt) {
   return d.toLocaleString("ko-KR", { hour12: false, timeZone: "Asia/Seoul" });
 }
 
-function ratioClass(ratio) {
-  if (ratio === null || ratio === undefined) return "";
-  if (ratio >= 5) return "ratio-high";
-  if (ratio < 0.5) return "ratio-low";
-  return "";
-}
-
 function renderUniversities(universities) {
   if (universities.length === 0) {
     appEl.innerHTML = '<div class="empty">아직 크롤링된 대학이 없습니다. RUN 버튼을 눌러 시작하세요.</div>';
@@ -37,7 +30,7 @@ function renderUniversities(universities) {
             <td>${d.college ? d.college + " · " : ""}${d.name}</td>
             <td>${d.capacityRaw}</td>
             <td>${d.applicants ?? "-"}</td>
-            <td class="${ratioClass(d.ratio)}">${d.ratio !== null && d.ratio !== undefined ? d.ratio.toFixed(2) + " : 1" : "-"}</td>
+            <td>${ratioBadgeHtml(d.ratio)}</td>
           </tr>
         `);
       }
@@ -45,6 +38,12 @@ function renderUniversities(universities) {
   }
 
   appEl.innerHTML = `
+    <div class="badge-key" style="margin-bottom:10px;">
+      <span class="badge badge-blue">5:1↑</span>
+      <span class="badge badge-magenta">10:1↑</span>
+      <span class="badge badge-orange">20:1↑</span>
+      <span class="badge badge-red">30:1↑</span>
+    </div>
     <div class="univ-card">
       <table>
         <thead>

@@ -2,8 +2,9 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { prisma } from "../../../packages/db/src/client.js";
+import { fuzzyMatch } from "../../crawler/src/matchSelection.js";
 import { persistSelectionResult, persistUniversity } from "../../crawler/src/persist.js";
-import { TARGET_UNIVERSITIES } from "../../crawler/src/targets.js";
+import { TARGET_SELECTIONS, TARGET_UNIVERSITIES } from "../../crawler/src/targets.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityMapping } from "../../crawler/src/types.js";
 import { forceTickOnce, getCrawlStatus, startCrawlLoop, stopCrawlLoop } from "./runner.js";
 
@@ -83,6 +84,68 @@ app.get("/api/universities/:id/history", async (req, res) => {
   }
 
   res.json(university);
+});
+
+/**
+ * "경쟁률보드" 페이지용: targets.ts에 등록한 (대학,전형,학과) 16건 전부를 순서대로 반환한다.
+ * DB에 아직 없는 항목(접수 시작 전 등)은 status: "pending"으로, 있으면 "ready"로 현재값+시간대별 스냅샷을 담는다.
+ */
+app.get("/api/board", async (_req, res) => {
+  const universities = await prisma.university.findMany({
+    include: {
+      admissionTypes: {
+        include: {
+          departments: {
+            include: { snapshots: { orderBy: { capturedAt: "asc" } } },
+          },
+        },
+      },
+    },
+  });
+
+  const findUniversity = (name: string) =>
+    universities.find((u) => u.name.replace(/\s*U$/, "").trim() === name);
+
+  const rows = TARGET_SELECTIONS.map((sel) => {
+    const uni = findUniversity(sel.university);
+    const base = {
+      university: sel.university,
+      department: sel.department,
+      admissionType: sel.admissionType,
+      core: Boolean(sel.core),
+    };
+
+    if (!uni) {
+      return { ...base, status: "pending" as const };
+    }
+
+    for (const at of uni.admissionTypes) {
+      if (!fuzzyMatch(at.name, sel.admissionType)) continue;
+      for (const d of at.departments) {
+        if (!fuzzyMatch(d.name, sel.department)) continue;
+        return {
+          ...base,
+          status: "ready" as const,
+          universityId: uni.id,
+          universityStatus: uni.status,
+          admissionTypeName: at.name,
+          quotaGroup: at.quotaGroup,
+          departmentName: d.name,
+          college: d.college || null,
+          capacityRaw: d.capacityRaw,
+          capacity: d.capacity,
+          applicants: d.applicants,
+          ratio: d.ratio,
+          capturedAt: at.capturedAt,
+          snapshots: d.snapshots.map((s) => ({ capturedAt: s.capturedAt, ratio: s.ratio, applicants: s.applicants })),
+        };
+      }
+    }
+
+    return { ...base, status: "pending" as const };
+  });
+
+  res.json({ rows, crawlStatus: getCrawlStatus() });
 });
 
 app.post("/api/crawl/start", (_req, res) => {

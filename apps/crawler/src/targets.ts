@@ -8,15 +8,17 @@ export interface TargetSelection {
   university: string;
   department: string;
   admissionType: string;
+  /** 대시보드 "핵심 6개 학과" 탭에 노출할 항목인지 (숙명여대·건국대·한국외대 2건·국민대·숭실대) */
+  core?: boolean;
 }
 
 export const TARGET_SELECTIONS: TargetSelection[] = [
-  { university: "숙명여자대학교", department: "일본학과", admissionType: "숙명인재(면접형)" },
-  { university: "한국외국어대학교", department: "태국학과", admissionType: "면접형" },
-  { university: "숭실대학교", department: "일어일문", admissionType: "SSU미래인재(면접형)" },
-  { university: "건국대학교", department: "일어교육과", admissionType: "KU자기추천" },
-  { university: "국민대학교", department: "동아시아국제학부", admissionType: "국민프런티어" },
-  { university: "한국외국어대학교", department: "이란학과", admissionType: "서류형" },
+  { university: "숙명여자대학교", department: "일본학과", admissionType: "숙명인재(면접형)", core: true },
+  { university: "한국외국어대학교", department: "태국학과", admissionType: "면접형", core: true },
+  { university: "숭실대학교", department: "일어일문", admissionType: "SSU미래인재(면접형)", core: true },
+  { university: "건국대학교", department: "일어교육과", admissionType: "KU자기추천", core: true },
+  { university: "국민대학교", department: "동아시아국제학부", admissionType: "국민프런티어", core: true },
+  { university: "한국외국어대학교", department: "이란학과", admissionType: "서류형", core: true },
   { university: "경희대학교", department: "일본어학과", admissionType: "네오르네상스" },
   { university: "경기대학교", department: "글로벌어문학부", admissionType: "KGU학생부종합전형" },
   { university: "명지대학교", department: "일어일문전공", admissionType: "명지인재면접형" },

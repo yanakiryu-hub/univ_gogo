@@ -46,7 +46,7 @@ function jaccard(a: Set<string>, b: Set<string>): number {
  * 학과명은 "화학과"처럼 짧은 단어가 "일본언어문화학과" 같은 다른 학과명 안에 우연히
  * 부분 포함되는 경우가 있어, 그 방향을 허용하면 엉뚱한 학과가 매칭될 수 있다.
  */
-function fuzzyMatch(siteText: string, queryText: string): boolean {
+export function fuzzyMatch(siteText: string, queryText: string): boolean {
   const a = normalize(stripBoilerplate(stripJeonhyeong(siteText)));
   const b = normalize(stripBoilerplate(stripJeonhyeong(queryText)));
   if (!a || !b) return false;

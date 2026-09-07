@@ -123,8 +123,140 @@ tbody td {
 
 tbody tr:hover { background: #fafbff; }
 
-.ratio-high { color: #b23434; font-weight: 700; }
-.ratio-low { color: #888; }
+/* ---------- 경쟁률 배지 (홈/경쟁률보드 공용) ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.badge-neutral { background: #f0f1f5; color: #8a8d99; }
+.badge-blue    { background: #e7effd; color: #2158c9; border-color: #cddbf7; }
+.badge-magenta { background: #fce7f0; color: #b32e6b; border-color: #f6cfe0; }
+.badge-orange  { background: #fdeee1; color: #c15a15; border-color: #f8d9bd; }
+.badge-red     { background: #fbe6e6; color: #b23434; border-color: #f4c6c6; }
+.badge-key { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- 사이트 상단 탭 (홈 / 경쟁률보드) ---------- */
+.site-nav {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  background: #1a1a2e;
+}
+.site-nav a {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9a9dc0;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a.active {
+  color: #fff;
+  border-bottom-color: #6c8cff;
+}
+.site-nav a:hover { color: #fff; }
+
+/* ---------- 서브 탭 (핵심 6개 학과 / 전체) ---------- */
+.sub-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+.sub-tab {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff;
+  border: 1px solid #e2e3ea;
+  color: #555;
+  cursor: pointer;
+}
+.sub-tab.active {
+  background: #1a1a2e;
+  border-color: #1a1a2e;
+  color: #fff;
+}
+
+/* ---------- 통계 카드 ---------- */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-card .label { font-size: 12px; color: #888; font-weight: 600; }
+.stat-card .value { font-size: 22px; font-weight: 800; color: #1a1a2e; font-variant-numeric: tabular-nums; }
+.stat-card .sub { font-size: 11.5px; color: #999; line-height: 1.4; }
+@media (max-width: 720px) {
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+.pending-note {
+  font-size: 12.5px;
+  color: #999;
+  padding: 10px 16px;
+}
+
+/* ---------- 경쟁률 추이 차트 (board.html) ---------- */
+.trend-outer { overflow-x: auto; }
+.trend-svg-wrap { position: relative; width: 900px; }
+svg.trend-chart .axis-label { fill: #999; font-size: 11px; }
+svg.trend-chart .axis-title { fill: #666; font-size: 11.5px; font-weight: 600; }
+svg.trend-chart .gridline { stroke: #eceef2; stroke-width: 1; }
+svg.trend-chart .baseline { stroke: #c7c9d4; stroke-width: 1; }
+svg.trend-chart .series-line { fill: none; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+svg.trend-chart .series-dot { stroke: #fff; stroke-width: 1.5; }
+svg.trend-chart .end-label { font-size: 11px; font-weight: 700; }
+svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray: 3 4; }
+
+.trend-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eceef2;
+}
+.trend-legend .item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #555; }
+.trend-legend .swatch { width: 18px; height: 3px; border-radius: 2px; }
+
+.trend-tooltip {
+  position: absolute;
+  top: 16px;
+  min-width: 160px;
+  background: #1a1a2e;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  font-size: 12px;
+  pointer-events: none;
+}
+.trend-tooltip .time { font-weight: 700; font-size: 12.5px; margin-bottom: 6px; }
+.trend-tooltip .row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 2px 0; }
+.trend-tooltip .row .name { display: flex; align-items: center; gap: 6px; color: #c9cbe0; }
+.trend-tooltip .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.trend-tooltip .row .val { font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .empty {
   padding: 40px;
