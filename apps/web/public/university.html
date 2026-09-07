@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>univ_gogo - 경쟁률 추이</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="chart-page">
+  <header>
+    <div>
+      <a class="back-link" href="/">&larr; 대시보드로 돌아가기</a>
+      <h1 id="univ-title">불러오는 중...</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="chart-controls">
+      <select id="select-admission-type"></select>
+      <select id="select-department"></select>
+    </div>
+    <div class="chart-box">
+      <canvas id="ratio-chart" height="90"></canvas>
+    </div>
+  </main>
+
+  <script src="/university.js"></script>
+</body>
+</html>

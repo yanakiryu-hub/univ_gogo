@@ -1,0 +1,23 @@
+{
+  "name": "@univ-gogo/crawler",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "mapping": "tsx src/fetchMapping.ts",
+    "detail": "tsx src/fetchDetail.ts",
+    "targets": "tsx src/resolveTargets.ts",
+    "crawl": "tsx src/crawlTargets.ts",
+    "persist": "tsx src/runOnce.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "cheerio": "^1.0.0",
+    "iconv-lite": "^0.6.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "@types/node": "^22.7.4"
+  }
+}

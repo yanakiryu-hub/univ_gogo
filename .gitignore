@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.log
+
+# SQLite DB (로컬 개발용, 크롤링 결과물이라 매번 새로 쌓임)
+packages/db/prisma/dev.db
+packages/db/prisma/dev.db-journal
+
+# env (packages/db/.env는 비밀값이 없어서 예외적으로 커밋함 - 로컬 개발용 상대경로 DB URL만 들어있음)
+.env
+.env.local
+!packages/db/.env

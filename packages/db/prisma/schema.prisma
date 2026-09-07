@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 유웨이어플라이 파워경쟁률 목록(info.uway.com/power)에 나오는 대학 한 건
+model University {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  category       String // "4년제 수시" | "전문대학(교) 수시" | "특수대학교" 등 목록의 구분 컬럼 값
+  region         String?
+  foundedType    String? // 국·공립 | 사립
+  status         String // 접수중 | 접수예정 | 접수마감 | 준비중
+  applyStart     DateTime?
+  applyEnd       DateTime?
+  applyUrl       String? // 원서접수 사이트 링크 (대학명 클릭 시 이동)
+  detailSource   String // "uwayapply" | "jinhakapply" | "unknown" - 상세 경쟁률 페이지 제공처
+  detailUrl      String // 경쟁률 보기 링크 (파서가 실제로 호출하는 URL)
+  lastMappedAt   DateTime @updatedAt
+  admissionTypes AdmissionType[]
+
+  @@index([detailSource])
+  @@index([status])
+}
+
+// 전형별 경쟁률 (예: 정원내 학생부교과(일반전형))
+model AdmissionType {
+  id           String   @id @default(cuid())
+  universityId String
+  university   University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  name         String // "학생부교과(일반전형)" 등, quotaGroup을 뺀 전형명
+  quotaGroup   String? // 정원내 | 정원외 (유웨이 상세 페이지 구분 컬럼)
+  capacity     Int?
+  applicants   Int?
+  ratio        Float?
+  capturedAt   DateTime // 이 값이 수집된 시각 (사이트에 표시된 "OO시 OO분 기준")
+  departments  Department[]
+
+  @@unique([universityId, name])
+  @@index([universityId])
+}
+
+// 전형 내 모집단위(학과)별 경쟁률
+model Department {
+  id              String   @id @default(cuid())
+  admissionTypeId String
+  admissionType   AdmissionType @relation(fields: [admissionTypeId], references: [id], onDelete: Cascade)
+  college         String // 단과대학/학부 (rowspan으로 묶인 상위 분류). 없는 경우 "" (Prisma 복합 unique는 null을 지원하지 않음)
+  name            String // 모집단위(학과)명
+  capacityRaw     String // "12", "4이내" 등 원본 텍스트 그대로 보존
+  capacity        Int? // 숫자로 파싱 가능한 경우만 채움 ("4이내"는 4로 파싱해 넣되 capacityRaw로 원문 구분)
+  applicants      Int?
+  ratio           Float?
+  snapshots       RatioSnapshot[]
+
+  @@index([admissionTypeId])
+  @@unique([admissionTypeId, college, name])
+}
+
+// 크롤링 시점별 경쟁률 변동 이력 (동일 학과에 대해 크롤링 실행마다 1건씩 적재)
+model RatioSnapshot {
+  id           String   @id @default(cuid())
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  capturedAt   DateTime
+  applicants   Int?
+  ratio        Float?
+
+  @@index([departmentId, capturedAt])
+}

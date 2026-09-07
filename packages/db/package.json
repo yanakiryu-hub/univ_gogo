@@ -1,0 +1,16 @@
+{
+  "name": "@univ-gogo/db",
+  "version": "0.0.1",
+  "private": true,
+  "main": "prisma/schema.prisma",
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "push": "prisma db push --skip-generate",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "prisma": "^5.20.0"
+  }
+}
