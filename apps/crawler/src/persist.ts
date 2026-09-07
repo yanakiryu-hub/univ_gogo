@@ -140,11 +140,13 @@ export async function crawlAndPersistAll(options: CrawlAndPersistOptions = {}): 
       continue;
     }
     if (r.ambiguous) {
+      const candidateNote =
+        r.candidates && r.candidates.length > 1 ? ` (후보: ${r.candidates.join(", ")})` : "";
       for (const s of selections) {
         results.push({
           target: label(s),
           status: "skipped",
-          detail: `이름 부분일치("${r.mapping.name}") - 확인 필요`,
+          detail: `이름 부분일치("${r.mapping.name}")${candidateNote} - 확인 필요`,
         });
       }
       continue;

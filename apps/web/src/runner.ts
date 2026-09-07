@@ -52,12 +52,16 @@ async function tick(opts: { force?: boolean } = {}) {
     lastRunAt = new Date();
     lastResults = results;
     const ok = results.filter((r) => r.status === "ok").length;
+    const ambiguousSkips = results.filter((r) => r.status === "skipped" && r.detail?.includes("확인 필요"));
     const skipped = results.filter((r) => r.status === "skipped").length;
     const errors = results.filter((r) => r.status === "error");
     lastResultSummary = `성공 ${ok} / 대기 ${skipped} / 실패 ${errors.length}`;
     console.log(`[crawl] ${lastRunAt.toISOString()} - ${lastResultSummary}`);
     for (const e of errors) {
       console.error(`[crawl] 실패: ${e.target} - ${e.detail}`);
+    }
+    for (const a of ambiguousSkips) {
+      console.warn(`[crawl] 확인 필요: ${a.target} - ${a.detail}`);
     }
   } catch (err) {
     console.error("[crawl] 실행 중 오류:", err);
@@ -100,5 +104,6 @@ export function getCrawlStatus() {
     lastRunAt: lastRunAt ? lastRunAt.toISOString() : null,
     lastResultSummary,
     lastErrors: lastResults.filter((r) => r.status === "error"),
+    lastAmbiguous: lastResults.filter((r) => r.status === "skipped" && r.detail?.includes("확인 필요")),
   };
 }

@@ -8,6 +8,8 @@ export interface ResolvedTarget {
   /** true면 완전 일치가 아니라 괄호가 붙은 다른 캠퍼스/분교 등과 매칭된 것일 수 있음 (사람 확인 필요) */
   ambiguous: boolean;
   mapping: UniversityMapping | null;
+  /** ambiguous일 때, 후보가 여러 개면 그 이름들도 같이 기록해 사람이 판단할 근거를 남긴다 */
+  candidates?: string[];
 }
 
 function normalize(name: string): string {
@@ -33,9 +35,19 @@ export async function resolveTargets(): Promise<ResolvedTarget[]> {
       return { target, found: true, ambiguous: false, mapping: exact };
     }
 
-    const partial = mapping.find((u) => u.name.includes(target));
-    if (partial) {
-      return { target, found: true, ambiguous: true, mapping: partial };
+    // 정확히 같은 이름이 없으면, target을 포함하는 후보들을 전부 모은다.
+    // "건국대학교(글로컬)"처럼 캠퍼스/분교가 여럿일 수 있어서, 이름이 가장 짧은(괄호가 덜 붙은) 걸
+    // 최선의 추정으로 고르되, 후보가 여럿이면 전부 candidates에 남겨 사람이 확인할 수 있게 한다.
+    const partials = mapping.filter((u) => u.name.includes(target));
+    if (partials.length > 0) {
+      const best = [...partials].sort((a, b) => a.name.length - b.name.length)[0];
+      return {
+        target,
+        found: true,
+        ambiguous: true,
+        mapping: best,
+        candidates: partials.map((p) => p.name),
+      };
     }
 
     return { target, found: false, ambiguous: false, mapping: null };
@@ -53,7 +65,8 @@ async function main() {
   for (const r of ready) {
     const m = r.mapping!;
     const mark = r.ambiguous ? "⚠️ (이름 부분일치 - 확인 필요)" : "✅";
-    console.log(`${mark} ${r.target} -> ${m.name} | ${m.status} | ${m.applyPeriodRaw} | source=${m.detailSource}`);
+    const candidateNote = r.candidates && r.candidates.length > 1 ? ` | 후보: ${r.candidates.join(", ")}` : "";
+    console.log(`${mark} ${r.target} -> ${m.name} | ${m.status} | ${m.applyPeriodRaw} | source=${m.detailSource}${candidateNote}`);
   }
 
   if (notYet.length > 0) {

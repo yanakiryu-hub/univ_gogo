@@ -44,7 +44,8 @@ async function main() {
       continue; // uwayapply는 Railway가 직접 크롤링하니 여기서 할 일 없음
     }
     if (r.ambiguous) {
-      console.log(`⚠️  ${r.target} - 이름 부분일치("${r.mapping.name}") - 확인 필요, 건너뜀`);
+      const candidateNote = r.candidates && r.candidates.length > 1 ? ` (후보: ${r.candidates.join(", ")})` : "";
+      console.log(`⚠️  ${r.target} - 이름 부분일치("${r.mapping.name}")${candidateNote} - 확인 필요, 건너뜀`);
       continue;
     }
 
