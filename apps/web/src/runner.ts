@@ -19,11 +19,11 @@ function isQuietHours(now: Date): boolean {
   return getKstHour(now) < QUIET_HOUR_BEFORE;
 }
 
-async function tick() {
+async function tick(opts: { force?: boolean } = {}) {
   if (inFlight) return;
 
   const now = new Date();
-  if (isQuietHours(now)) {
+  if (isQuietHours(now) && !opts.force) {
     lastSkippedQuietHours = true;
     console.log(`[crawl] ${now.toISOString()} - 오전 ${QUIET_HOUR_BEFORE}시 이전이라 이번 주기는 건너뜀`);
     return;
@@ -54,7 +54,12 @@ export function startCrawlLoop() {
   if (running) return;
   running = true;
   void tick(); // 시작하자마자 1회 즉시 실행 (단, 오전 10시 이전이면 건너뜀)
-  timer = setInterval(tick, INTERVAL_MS);
+  timer = setInterval(() => void tick(), INTERVAL_MS);
+}
+
+/** 오전 10시 이전이어도 강제로 한 번 크롤링한다 (수동 새로고침/디버깅용). 반복 루프 상태는 건드리지 않는다. */
+export async function forceTickOnce() {
+  await tick({ force: true });
 }
 
 export function stopCrawlLoop() {

@@ -5,7 +5,7 @@ import { prisma } from "../../../packages/db/src/client.js";
 import { persistSelectionResult, persistUniversity } from "../../crawler/src/persist.js";
 import { TARGET_UNIVERSITIES } from "../../crawler/src/targets.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityMapping } from "../../crawler/src/types.js";
-import { getCrawlStatus, startCrawlLoop, stopCrawlLoop } from "./runner.js";
+import { forceTickOnce, getCrawlStatus, startCrawlLoop, stopCrawlLoop } from "./runner.js";
 
 /** targets.ts에 적어둔 대학 순서대로 대시보드에 노출한다. 목록에 없는 이름은 뒤로 보낸다. */
 function targetOrderIndex(universityName: string): number {
@@ -87,6 +87,12 @@ app.get("/api/universities/:id/history", async (req, res) => {
 
 app.post("/api/crawl/start", (_req, res) => {
   startCrawlLoop();
+  res.json(getCrawlStatus());
+});
+
+// 오전 10시 이전이어도 강제로 한 번 크롤링 (수동 새로고침/디버깅용, 반복 루프 상태는 안 건드림)
+app.post("/api/crawl/run-once", async (_req, res) => {
+  await forceTickOnce();
   res.json(getCrawlStatus());
 });
 
