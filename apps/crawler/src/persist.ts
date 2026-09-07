@@ -21,7 +21,7 @@ function label(s: TargetSelection): string {
   return `${s.university} ${s.department} (${s.admissionType})`;
 }
 
-async function persistUniversity(m: UniversityMapping) {
+export async function persistUniversity(m: UniversityMapping) {
   const { start, end } = parseApplyPeriod(m.applyPeriodRaw);
   return prisma.university.upsert({
     where: { name: m.name },
@@ -52,7 +52,7 @@ async function persistUniversity(m: UniversityMapping) {
 }
 
 /** 매칭된 전형 하나 + 학과 하나만 저장한다 (targets.ts에서 고른 항목만 DB/화면에 남기기 위함) */
-async function persistSelectionResult(
+export async function persistSelectionResult(
   universityId: string,
   capturedAt: Date,
   at: AdmissionTypeRatio,
