@@ -3,8 +3,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { prisma } from "../../../packages/db/src/client.js";
 import { persistSelectionResult, persistUniversity } from "../../crawler/src/persist.js";
+import { TARGET_UNIVERSITIES } from "../../crawler/src/targets.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityMapping } from "../../crawler/src/types.js";
 import { getCrawlStatus, startCrawlLoop, stopCrawlLoop } from "./runner.js";
+
+/** targets.ts에 적어둔 대학 순서대로 대시보드에 노출한다. 목록에 없는 이름은 뒤로 보낸다. */
+function targetOrderIndex(universityName: string): number {
+  const normalized = universityName.replace(/\s*U$/, "").trim();
+  const idx = TARGET_UNIVERSITIES.indexOf(normalized);
+  return idx === -1 ? TARGET_UNIVERSITIES.length : idx;
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -15,19 +23,20 @@ app.use(express.json());
 
 // 대시보드에 필요한 전체 상태: 대학 목록 + 전형 + 학과별 현재 경쟁률 + 크롤러 상태
 app.get("/api/state", async (_req, res) => {
-  const universities = await prisma.university.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      admissionTypes: {
-        orderBy: { name: "asc" },
-        include: {
-          departments: {
-            orderBy: [{ college: "asc" }, { name: "asc" }],
+  const universities = (
+    await prisma.university.findMany({
+      include: {
+        admissionTypes: {
+          orderBy: { name: "asc" },
+          include: {
+            departments: {
+              orderBy: [{ college: "asc" }, { name: "asc" }],
+            },
           },
         },
       },
-    },
-  });
+    })
+  ).sort((a, b) => targetOrderIndex(a.name) - targetOrderIndex(b.name));
 
   const lastMappedAt = universities.reduce<Date | null>((max, u) => {
     if (!max || u.lastMappedAt > max) return u.lastMappedAt;
