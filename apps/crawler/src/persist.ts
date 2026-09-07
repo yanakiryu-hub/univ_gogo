@@ -1,4 +1,5 @@
 import { prisma } from "../../../packages/db/src/client.js";
+import { kstToUtcDate } from "./kst.js";
 import { matchSelection } from "./matchSelection.js";
 import { parseJinhakapplyDetail } from "./parseJinhakapplyDetail.js";
 import { parseUwayDetail } from "./parseUwayDetail.js";
@@ -12,8 +13,8 @@ function parseApplyPeriod(raw: string | null): { start: Date | null; end: Date |
   if (!m) return { start: null, end: null };
   const [, sy, smo, sd, ey, emo, ed] = m;
   return {
-    start: new Date(Number(sy), Number(smo) - 1, Number(sd)),
-    end: new Date(Number(ey), Number(emo) - 1, Number(ed)),
+    start: kstToUtcDate(Number(sy), Number(smo), Number(sd)),
+    end: kstToUtcDate(Number(ey), Number(emo), Number(ed)),
   };
 }
 

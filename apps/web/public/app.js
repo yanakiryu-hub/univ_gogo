@@ -7,7 +7,7 @@ const btnStop = document.getElementById("btn-stop");
 function fmt(dt) {
   if (!dt) return "-";
   const d = new Date(dt);
-  return d.toLocaleString("ko-KR", { hour12: false });
+  return d.toLocaleString("ko-KR", { hour12: false, timeZone: "Asia/Seoul" });
 }
 
 function ratioClass(ratio) {

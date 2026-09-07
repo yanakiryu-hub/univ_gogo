@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getKstHour } from "./kst.js";
 import { matchSelection } from "./matchSelection.js";
 import { parseJinhakapplyDetail } from "./parseJinhakapplyDetail.js";
 import { resolveTargets } from "./resolveTargets.js";
@@ -24,7 +25,7 @@ async function main() {
   }
 
   const now = new Date();
-  if (now.getHours() < 10 && process.env.FORCE_RUN !== "1") {
+  if (getKstHour(now) < 10 && process.env.FORCE_RUN !== "1") {
     console.log(`[push] 오전 10시 이전이라 건너뜀 (${now.toISOString()}, 강제 실행하려면 FORCE_RUN=1)`);
     return;
   }

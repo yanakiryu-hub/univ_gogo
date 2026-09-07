@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { fetchEucKr } from "./http.js";
+import { kstToUtcDate } from "./kst.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityRatioDetail } from "./types.js";
 
 function parseRatio(text: string): number | null {
@@ -18,7 +19,7 @@ function parseCapturedAt(raw: string | null): Date | null {
   const m = raw.match(/(\d{4})년\s*(\d{2})월\s*(\d{2})일\s*(\d{2})시\s*(\d{2})분/);
   if (!m) return null;
   const [, y, mo, d, h, mi] = m;
-  return new Date(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi));
+  return kstToUtcDate(Number(y), Number(mo), Number(d), Number(h), Number(mi));
 }
 
 type ColumnRole = "group" | "unit" | "capacity" | "applicants" | "ratio" | "ignore";

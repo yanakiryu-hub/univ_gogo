@@ -1,3 +1,4 @@
+import { getKstHour } from "../../crawler/src/kst.js";
 import { crawlAndPersistAll, type CrawlRunResult } from "../../crawler/src/persist.js";
 
 const INTERVAL_MS = 10 * 60 * 1000; // 10분마다 재수집
@@ -15,7 +16,7 @@ let lastSkippedQuietHours = false;
 let lastResults: CrawlRunResult[] = [];
 
 function isQuietHours(now: Date): boolean {
-  return now.getHours() < QUIET_HOUR_BEFORE;
+  return getKstHour(now) < QUIET_HOUR_BEFORE;
 }
 
 async function tick() {

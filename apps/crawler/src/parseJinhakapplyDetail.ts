@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { kstToUtcDate } from "./kst.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityRatioDetail } from "./types.js";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36";
@@ -27,7 +28,7 @@ function parseCapturedAt(raw: string | null): Date | null {
   const [, y, mo, d, ampm, hRaw, mi] = m;
   let h = Number(hRaw) % 12;
   if (ampm === "오후") h += 12;
-  return new Date(Number(y), Number(mo) - 1, Number(d), h, Number(mi));
+  return kstToUtcDate(Number(y), Number(mo), Number(d), h, Number(mi));
 }
 
 /**

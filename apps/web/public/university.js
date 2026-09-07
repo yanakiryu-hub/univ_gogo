@@ -11,7 +11,14 @@ let chart = null;
 
 function fmtTime(dt) {
   const d = new Date(dt);
-  return d.toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+  return d.toLocaleString("ko-KR", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Seoul",
+  });
 }
 
 function populateAdmissionTypes() {
