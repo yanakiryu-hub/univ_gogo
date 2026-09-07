@@ -116,7 +116,16 @@ export interface CrawlRunResult {
  * 대학 하나당 상세 페이지는 한 번만 불러오고, 그 안에서 필요한 선택 항목들만 골라서 저장한다.
  * 웹 대시보드/CLI 양쪽에서 공용으로 쓰는 진입점.
  */
-export async function crawlAndPersistAll(): Promise<CrawlRunResult[]> {
+export interface CrawlAndPersistOptions {
+  /**
+   * true면 detailSource가 jinhakapply인 대학은 아예 시도하지 않고 skipped 처리한다.
+   * addon.jinhakapply.com이 해외 IP를 차단해서, 해외 리전에 배포된 서버(Railway 등)에서는
+   * 매번 403만 반복되므로 로컬 push 스크립트(pushJinhakapply.ts)에게 맡기고 조용히 건너뛴다.
+   */
+  skipJinhakapply?: boolean;
+}
+
+export async function crawlAndPersistAll(options: CrawlAndPersistOptions = {}): Promise<CrawlRunResult[]> {
   const resolved = await resolveTargets();
   const results: CrawlRunResult[] = [];
 
@@ -135,6 +144,16 @@ export async function crawlAndPersistAll(): Promise<CrawlRunResult[]> {
           target: label(s),
           status: "skipped",
           detail: `이름 부분일치("${r.mapping.name}") - 확인 필요`,
+        });
+      }
+      continue;
+    }
+    if (options.skipJinhakapply && r.mapping.detailSource === "jinhakapply") {
+      for (const s of selections) {
+        results.push({
+          target: label(s),
+          status: "skipped",
+          detail: "진학어플라이 소스 - 로컬 크롤러(push:jinhakapply)가 담당",
         });
       }
       continue;

@@ -31,7 +31,7 @@ async function tick() {
 
   inFlight = true;
   try {
-    const results = await crawlAndPersistAll();
+    const results = await crawlAndPersistAll({ skipJinhakapply: true });
     lastRunAt = new Date();
     lastResults = results;
     const ok = results.filter((r) => r.status === "ok").length;

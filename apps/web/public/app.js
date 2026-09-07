@@ -23,50 +23,44 @@ function renderUniversities(universities) {
     return;
   }
 
-  appEl.innerHTML = universities
-    .map((u, idx) => {
-      const rows = [];
-      for (const at of u.admissionTypes) {
-        for (const d of at.departments) {
-          rows.push(`
-            <tr>
-              <td>${at.name}${at.quotaGroup ? ` <span class="univ-sub">(${at.quotaGroup})</span>` : ""}</td>
-              <td>${d.college ? d.college + " · " : ""}${d.name}</td>
-              <td>${d.capacityRaw}</td>
-              <td>${d.applicants ?? "-"}</td>
-              <td class="${ratioClass(d.ratio)}">${d.ratio !== null && d.ratio !== undefined ? d.ratio.toFixed(2) + " : 1" : "-"}</td>
-            </tr>
-          `);
-        }
-      }
-
-      const deptCount = rows.length;
-
-      return `
-        <details class="univ-card" ${idx === 0 ? "open" : ""}>
-          <summary>
-            <span>
+  const rows = [];
+  for (const u of universities) {
+    for (const at of u.admissionTypes) {
+      for (const d of at.departments) {
+        rows.push(`
+          <tr>
+            <td class="col-univ">
               <a href="/university.html?id=${u.id}">${u.name}</a>
-              <span class="univ-sub">${u.region ?? ""} · ${u.foundedType ?? ""} · ${u.status}</span>
-            </span>
-            <span class="univ-sub">전형 ${u.admissionTypes.length}개 · 학과 ${deptCount}개</span>
-          </summary>
-          <table>
-            <thead>
-              <tr>
-                <th>전형</th>
-                <th>모집단위(학과)</th>
-                <th>모집인원</th>
-                <th>지원인원</th>
-                <th>경쟁률</th>
-              </tr>
-            </thead>
-            <tbody>${rows.join("")}</tbody>
-          </table>
-        </details>
-      `;
-    })
-    .join("");
+              <span class="univ-sub">${u.region ?? ""} · ${u.status}</span>
+            </td>
+            <td>${at.name}${at.quotaGroup ? ` <span class="univ-sub">(${at.quotaGroup})</span>` : ""}</td>
+            <td>${d.college ? d.college + " · " : ""}${d.name}</td>
+            <td>${d.capacityRaw}</td>
+            <td>${d.applicants ?? "-"}</td>
+            <td class="${ratioClass(d.ratio)}">${d.ratio !== null && d.ratio !== undefined ? d.ratio.toFixed(2) + " : 1" : "-"}</td>
+          </tr>
+        `);
+      }
+    }
+  }
+
+  appEl.innerHTML = `
+    <div class="univ-card">
+      <table>
+        <thead>
+          <tr>
+            <th>대학</th>
+            <th>전형</th>
+            <th>모집단위(학과)</th>
+            <th>모집인원</th>
+            <th>지원인원</th>
+            <th>경쟁률</th>
+          </tr>
+        </thead>
+        <tbody>${rows.join("")}</tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderCrawlStatus(status) {
