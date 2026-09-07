@@ -142,4 +142,7 @@ app.post("/api/ingest/selection", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`univ_gogo web running at http://localhost:${PORT}`);
+  // 사람이 RUN을 누르지 않아도 서버가 켜지면 자동으로 크롤링 루프를 시작한다.
+  // 실제 크롤링 여부는 runner.ts의 시작/종료 시각(9/8 10:00 ~ 9/11 20:00 KST)에 따라 알아서 결정됨.
+  startCrawlLoop();
 });

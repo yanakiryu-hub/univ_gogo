@@ -68,8 +68,13 @@ function renderCrawlStatus(status) {
     ? '<span class="status-badge status-running">실행중</span>'
     : '<span class="status-badge status-stopped">정지됨</span>';
   let extra = "";
-  if (status.inFlight) extra = " (크롤링 진행중...)";
-  else if (status.running && status.inQuietHours) extra = ` (오전 ${status.quietHourBefore}시 이전이라 대기중)`;
+  if (status.inFlight) {
+    extra = " (크롤링 진행중...)";
+  } else if (status.running && status.isBeforeStart) {
+    extra = ` (${fmt(status.crawlStartAt)} 시작 예정, 대기중)`;
+  } else if (status.isAfterEnd) {
+    extra = ` (${fmt(status.crawlEndAt)} 종료됨)`;
+  }
   crawlStatusEl.innerHTML = `${badge}${extra}`;
   btnRun.disabled = status.running;
   btnStop.disabled = !status.running;
