@@ -1,7 +1,6 @@
 import { config } from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { getKstHour } from "./kst.js";
 import { matchSelection } from "./matchSelection.js";
 import { parseJinhakapplyDetail } from "./parseJinhakapplyDetail.js";
 import { resolveTargets } from "./resolveTargets.js";
@@ -16,18 +15,12 @@ const INGEST_SECRET = process.env.INGEST_SECRET;
 /**
  * addon.jinhakapply.com(진학어플라이)은 해외 IP를 막아서 Railway 등 해외 서버에서 직접 크롤링이 안 된다.
  * 그래서 한국 IP인 이 기기(로컬)에서 대신 크롤링해 Railway의 /api/ingest/selection으로 결과를 전송한다.
- * cron으로 주기 실행하는 걸 전제로, 오전 10시 이전에는 서버(runner.ts)와 동일하게 스킵한다.
+ * 이미 접수 중인 대학은 시간 제한 없이 바로 갱신한다 (아직 안 열린 대학은 resolveTargets에서 알아서 건너뜀).
  */
 async function main() {
   if (!INGEST_URL || !INGEST_SECRET) {
     console.error("INGEST_URL / INGEST_SECRET이 설정되지 않았습니다. apps/crawler/.env.local을 확인하세요.");
     process.exit(1);
-  }
-
-  const now = new Date();
-  if (getKstHour(now) < 10 && process.env.FORCE_RUN !== "1") {
-    console.log(`[push] 오전 10시 이전이라 건너뜀 (${now.toISOString()}, 강제 실행하려면 FORCE_RUN=1)`);
-    return;
   }
 
   const resolved = await resolveTargets();
