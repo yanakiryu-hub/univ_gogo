@@ -6,7 +6,8 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
-    "push": "prisma db push --skip-generate",
+    "dedupe": "node scripts/dedupe-departments.mjs",
+    "push": "prisma db push --skip-generate --accept-data-loss",
     "studio": "prisma studio"
   },
   "dependencies": {

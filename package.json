@@ -10,6 +10,6 @@
   },
   "scripts": {
     "build": "npm run generate -w @univ-gogo/db",
-    "start": "npm run push -w @univ-gogo/db && npm run start -w @univ-gogo/web"
+    "start": "npm run dedupe -w @univ-gogo/db && npm run push -w @univ-gogo/db && npm run start -w @univ-gogo/web"
   }
 }

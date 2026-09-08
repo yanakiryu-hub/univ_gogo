@@ -82,7 +82,7 @@ export async function persistSelectionResult(
   const college = dept.college ?? "";
   const department = await prisma.department.upsert({
     where: {
-      admissionTypeId_college_name: { admissionTypeId: admissionType.id, college, name: dept.name },
+      admissionTypeId_name: { admissionTypeId: admissionType.id, name: dept.name },
     },
     create: {
       admissionTypeId: admissionType.id,

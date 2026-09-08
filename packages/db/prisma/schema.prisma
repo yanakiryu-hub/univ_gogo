@@ -58,7 +58,9 @@ model Department {
   snapshots       RatioSnapshot[]
 
   @@index([admissionTypeId])
-  @@unique([admissionTypeId, college, name])
+  // college는 파서가 나중에 더 정확히 채워질 수 있어(예: 처음엔 "" 였다가 이후 실제 단과대명이 잡힘)
+  // unique 키에 넣으면 같은 학과가 중복 생성된다. 학과 식별은 (전형, 학과명)만으로 충분하다.
+  @@unique([admissionTypeId, name])
 }
 
 // 크롤링 시점별 경쟁률 변동 이력 (동일 학과에 대해 크롤링 실행마다 1건씩 적재)
