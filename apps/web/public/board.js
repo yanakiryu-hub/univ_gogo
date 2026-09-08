@@ -137,6 +137,9 @@ function renderChart() {
   rows.forEach((r) => r.snapshots.forEach((s) => timeSet.add(s.capturedAt)));
   const times = [...timeSet].sort();
 
+  const isMobile = window.innerWidth < 500;
+  const labelFont = isMobile ? "600 10px -apple-system, BlinkMacSystemFont, sans-serif" : "600 11px -apple-system, BlinkMacSystemFont, sans-serif";
+
   const datasets = rows.map((r, i) => {
     const byTime = Object.fromEntries(r.snapshots.map((s) => [s.capturedAt, s.ratio]));
     const color = PALETTE[i % PALETTE.length];
@@ -146,21 +149,32 @@ function renderChart() {
       data: times.map((t) => (t in byTime ? byTime[t] : null)),
       borderColor: color,
       backgroundColor: color,
+      borderWidth: isMobile ? 2 : 2.5,
       spanGaps: true,
       tension: 0.25,
-      pointRadius: 3,
+      pointRadius: isMobile ? 2 : 3,
       pointHoverRadius: 5,
     };
   });
 
+  // 오른쪽 여백은 가장 긴 라벨 폭 + 여유만큼 확보한다 (짧은 대학명은 잘리지 않도록).
+  const measureCtx = trendCanvas.getContext("2d");
+  measureCtx.save();
+  measureCtx.font = labelFont;
+  const maxLabelWidth = datasets.reduce((m, ds) => Math.max(m, measureCtx.measureText(ds.shortLabel).width), 0);
+  measureCtx.restore();
+  const rightPadding = Math.min(150, Math.max(70, maxLabelWidth + 26));
+
   // 범례만으로는 어떤 선이 어느 대학인지 찾기 번거로우니, 각 선의 끝에 대학명을 직접 표시한다.
+  // 값이 서로 가까워 라벨이 겹치는 경우, 세로로 밀어내고(collision avoidance) 원래 위치까지 얇은 안내선을 그려준다.
   const endLabelPlugin = {
     id: "endLabel",
     afterDatasetsDraw(chart) {
-      const { ctx } = chart;
-      ctx.save();
-      ctx.font = "600 11px -apple-system, BlinkMacSystemFont, sans-serif";
-      ctx.textBaseline = "middle";
+      const { ctx, chartArea } = chart;
+      const pad = 3;
+      const lineHeight = isMobile ? 15 : 16;
+
+      const entries = [];
       chart.data.datasets.forEach((ds, i) => {
         const meta = chart.getDatasetMeta(i);
         if (meta.hidden) return;
@@ -174,15 +188,63 @@ function renderChart() {
         if (lastIdx === -1) return;
         const point = meta.data[lastIdx];
         if (!point) return;
-        const x = point.x + 6;
-        const y = point.y;
-        const text = ds.shortLabel || ds.label;
-        const textWidth = ctx.measureText(text).width;
-        ctx.fillStyle = "rgba(255,255,255,0.85)";
-        ctx.fillRect(x - 2, y - 8, textWidth + 4, 16);
-        ctx.fillStyle = ds.borderColor;
-        ctx.fillText(text, x, y);
+        entries.push({
+          anchorX: point.x,
+          anchorY: point.y,
+          y: point.y,
+          text: ds.shortLabel || ds.label,
+          color: ds.borderColor,
+        });
       });
+      if (entries.length === 0) return;
+
+      entries.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < entries.length; i++) {
+        if (entries[i].y - entries[i - 1].y < lineHeight) {
+          entries[i].y = entries[i - 1].y + lineHeight;
+        }
+      }
+      const bottomLimit = chartArea.bottom - pad;
+      if (entries[entries.length - 1].y > bottomLimit) {
+        entries[entries.length - 1].y = bottomLimit;
+        for (let i = entries.length - 2; i >= 0; i--) {
+          if (entries[i + 1].y - entries[i].y < lineHeight) {
+            entries[i].y = entries[i + 1].y - lineHeight;
+          }
+        }
+      }
+
+      ctx.save();
+      ctx.font = labelFont;
+      ctx.textBaseline = "middle";
+      const labelX = chartArea.right + 8;
+
+      entries.forEach((e) => {
+        if (Math.abs(e.y - e.anchorY) > 2) {
+          ctx.save();
+          ctx.strokeStyle = e.color;
+          ctx.globalAlpha = 0.5;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 2]);
+          ctx.beginPath();
+          ctx.moveTo(e.anchorX, e.anchorY);
+          ctx.lineTo(labelX - 4, e.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+
+      entries.forEach((e) => {
+        const textWidth = ctx.measureText(e.text).width;
+        ctx.fillStyle = e.color;
+        ctx.beginPath();
+        ctx.arc(labelX - 4, e.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = e.color;
+        ctx.fillText(e.text, labelX + 2, e.y);
+        void textWidth;
+      });
+
       ctx.restore();
     },
   };
@@ -198,14 +260,11 @@ function renderChart() {
       responsive: true,
       maintainAspectRatio: false,
       layout: {
-        padding: { right: 90 },
+        padding: { right: rightPadding, top: 6 },
       },
       interaction: { mode: "index", intersect: false },
       plugins: {
-        legend: {
-          position: "bottom",
-          labels: { boxWidth: 12, padding: 10, font: { size: 11 } },
-        },
+        legend: { display: false },
         tooltip: {
           titleFont: { size: 12 },
           bodyFont: { size: 12 },
@@ -216,22 +275,40 @@ function renderChart() {
       },
       scales: {
         x: {
+          grid: { color: "rgba(0,0,0,0.05)" },
           ticks: {
             font: { size: 11 },
             maxRotation: 45,
             minRotation: 0,
             autoSkip: true,
-            maxTicksLimit: window.innerWidth < 500 ? 5 : 10,
+            maxTicksLimit: isMobile ? 5 : 10,
           },
         },
         y: {
           beginAtZero: true,
+          grid: { color: "rgba(0,0,0,0.05)" },
           title: { display: true, text: "경쟁률 (:1)", font: { size: 12 } },
           ticks: { font: { size: 11 }, callback: (v) => Number(v).toFixed(1) },
         },
       },
     },
   });
+
+  // 색상-대학 매칭을 위한 범례는 표 밑 캡션으로 대체한다 (선 끝 라벨과 중복되지 않도록 컴팩트하게).
+  renderChartLegend(datasets);
+}
+
+function renderChartLegend(datasets) {
+  let legendEl = document.getElementById("chart-legend");
+  if (!legendEl) {
+    legendEl = document.createElement("div");
+    legendEl.id = "chart-legend";
+    legendEl.className = "chart-legend";
+    trendCanvas.closest(".chart-canvas-wrap").insertAdjacentElement("afterend", legendEl);
+  }
+  legendEl.innerHTML = datasets
+    .map((ds) => `<span class="chart-legend-item"><i style="background:${ds.borderColor}"></i>${ds.label}</span>`)
+    .join("");
 }
 
 /* ---------------- glue ---------------- */

@@ -333,10 +333,36 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   width: 100%;
   height: 340px;
 }
+
+/* board.html 추이 그래프: 선 끝 직접 라벨과 별개로, 색상-대학 대응을 확인할 수 있는 컴팩트한 캡션 범례 */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eceef2;
+}
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #666;
+}
+.chart-legend-item i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
 @media (max-width: 600px) {
   .chart-box { padding: 14px 10px; }
-  .chart-canvas-wrap { height: 260px; }
+  .chart-canvas-wrap { height: 340px; }
   .chart-controls select { font-size: 12.5px; padding: 6px 8px; }
+  .chart-legend-item { font-size: 11px; }
 }
 .back-link {
   display: inline-block;
