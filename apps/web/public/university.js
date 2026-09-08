@@ -78,7 +78,16 @@ function renderChart() {
           position: "bottom",
           labels: { boxWidth: 14, padding: 14, font: { size: 12 } },
         },
-        tooltip: { titleFont: { size: 12 }, bodyFont: { size: 12 } },
+        tooltip: {
+          titleFont: { size: 12 },
+          bodyFont: { size: 12 },
+          callbacks: {
+            label: (ctx) =>
+              ctx.dataset.yAxisID === "y1"
+                ? `${ctx.dataset.label}: ${Math.round(ctx.parsed.y)}`
+                : `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`,
+          },
+        },
       },
       scales: {
         x: {
@@ -94,13 +103,13 @@ function renderChart() {
           type: "linear",
           position: "left",
           title: { display: true, text: "경쟁률 (:1)", font: { size: 12 } },
-          ticks: { font: { size: 11 } },
+          ticks: { font: { size: 11 }, callback: (v) => Number(v).toFixed(1) },
         },
         y1: {
           type: "linear",
           position: "right",
           title: { display: true, text: "지원인원", font: { size: 12 } },
-          ticks: { font: { size: 11 } },
+          ticks: { font: { size: 11 }, precision: 0, callback: (v) => Math.round(v) },
           grid: { drawOnChartArea: false },
         },
       },
