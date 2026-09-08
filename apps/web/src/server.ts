@@ -129,6 +129,7 @@ app.get("/api/board", async (_req, res) => {
           universityId: uni.id,
           universityStatus: uni.status,
           detailSource: uni.detailSource,
+          updateNotice: uni.updateNotice,
           admissionTypeName: at.name,
           quotaGroup: at.quotaGroup,
           departmentName: d.name,
@@ -172,6 +173,7 @@ app.get("/api/crawl/status", (_req, res) => {
 interface IngestBody {
   universityMapping: UniversityMapping;
   capturedAt: string | null;
+  updateNotice: string | null;
   admissionType: AdmissionTypeRatio;
   department: DepartmentRatio;
 }
@@ -195,7 +197,7 @@ app.post("/api/ingest/selection", async (req, res) => {
   }
 
   try {
-    const university = await persistUniversity(body.universityMapping);
+    const university = await persistUniversity(body.universityMapping, body.updateNotice);
     const capturedAt = body.capturedAt ? new Date(body.capturedAt) : new Date();
     await persistSelectionResult(university.id, capturedAt, body.admissionType, body.department);
     res.json({ ok: true });

@@ -20,6 +20,7 @@ model University {
   applyUrl       String? // 원서접수 사이트 링크 (대학명 클릭 시 이동)
   detailSource   String // "uwayapply" | "jinhakapply" | "unknown" - 상세 경쟁률 페이지 제공처
   detailUrl      String // 경쟁률 보기 링크 (파서가 실제로 호출하는 URL)
+  updateNotice   String? // 사이트에 적힌 "경쟁률은 10분마다/매일 10시·14시·17시 업데이트" 등 안내 원문
   lastMappedAt   DateTime @updatedAt
   admissionTypes AdmissionType[]
 

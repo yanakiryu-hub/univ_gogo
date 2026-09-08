@@ -2,6 +2,7 @@ import * as cheerio from "cheerio";
 import { fetchEucKr } from "./http.js";
 import { kstToUtcDate } from "./kst.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityRatioDetail } from "./types.js";
+import { extractUpdateNotice } from "./updateNotice.js";
 
 function parseRatio(text: string): number | null {
   const m = text.match(/([\d.]+)\s*:\s*1/);
@@ -54,6 +55,7 @@ export async function parseUwayDetail(url: string, universityName: string): Prom
       .text()
       .match(/\d{4}년\s*\d{2}월\s*\d{2}일\s*\d{2}시\s*\d{2}분\s*기준/)?.[0] ?? null;
   const capturedAt = parseCapturedAt(capturedAtRaw);
+  const updateNotice = extractUpdateNotice($, "#Ratio_Comment");
 
   const admissionTypes: AdmissionTypeRatio[] = [];
 
@@ -159,6 +161,7 @@ export async function parseUwayDetail(url: string, universityName: string): Prom
     universityName,
     capturedAt,
     capturedAtRaw,
+    updateNotice,
     admissionTypes,
   };
 }

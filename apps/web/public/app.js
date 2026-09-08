@@ -36,6 +36,7 @@ function renderUniversities(universities) {
             <td>${d.applicants ?? "-"}</td>
             <td>${ratioBadgeHtml(d.ratio)}</td>
             <td>${fmtUpdatedAt(at.capturedAt)}</td>
+            <td class="notice-cell">${u.updateNotice ?? "-"}</td>
           </tr>
         `);
       }
@@ -61,6 +62,7 @@ function renderUniversities(universities) {
               <th>지원인원</th>
               <th>경쟁률</th>
               <th>마지막 업데이트</th>
+              <th>업데이트 안내</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>

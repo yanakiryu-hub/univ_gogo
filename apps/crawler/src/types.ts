@@ -34,5 +34,7 @@ export interface UniversityRatioDetail {
   universityName: string;
   capturedAt: Date | null;
   capturedAtRaw: string | null;
+  /** 사이트에 적힌 "경쟁률은 10분마다 업데이트/매일 10시·14시·17시 업데이트" 같은 안내 원문 */
+  updateNotice: string | null;
   admissionTypes: AdmissionTypeRatio[];
 }

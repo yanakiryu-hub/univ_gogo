@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import { kstToUtcDate } from "./kst.js";
 import type { AdmissionTypeRatio, DepartmentRatio, UniversityRatioDetail } from "./types.js";
+import { extractUpdateNotice } from "./updateNotice.js";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36";
 
@@ -62,6 +63,7 @@ export async function parseJinhakapplyDetail(
 
   const capturedAtRaw = $("#RatioTime").first().text().trim() || null;
   const capturedAt = parseCapturedAt(capturedAtRaw);
+  const updateNotice = extractUpdateNotice($, "#TopType");
 
   const admissionTypes: AdmissionTypeRatio[] = [];
 
@@ -156,6 +158,7 @@ export async function parseJinhakapplyDetail(
     universityName,
     capturedAt,
     capturedAtRaw,
+    updateNotice,
     admissionTypes,
   };
 }

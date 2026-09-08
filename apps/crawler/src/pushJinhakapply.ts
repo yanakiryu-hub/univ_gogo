@@ -59,6 +59,7 @@ async function main() {
           body: JSON.stringify({
             universityMapping: m,
             capturedAt: detail.capturedAt ? detail.capturedAt.toISOString() : null,
+            updateNotice: detail.updateNotice,
             admissionType: match.admissionType,
             department: match.department,
           }),

@@ -22,7 +22,7 @@ function label(s: TargetSelection): string {
   return `${s.university} ${s.department} (${s.admissionType})`;
 }
 
-export async function persistUniversity(m: UniversityMapping) {
+export async function persistUniversity(m: UniversityMapping, updateNotice?: string | null) {
   const { start, end } = parseApplyPeriod(m.applyPeriodRaw);
   return prisma.university.upsert({
     where: { name: m.name },
@@ -37,6 +37,7 @@ export async function persistUniversity(m: UniversityMapping) {
       applyUrl: m.applyUrl,
       detailSource: m.detailSource,
       detailUrl: m.detailUrl!,
+      updateNotice: updateNotice ?? null,
     },
     update: {
       category: m.category,
@@ -48,6 +49,8 @@ export async function persistUniversity(m: UniversityMapping) {
       applyUrl: m.applyUrl,
       detailSource: m.detailSource,
       detailUrl: m.detailUrl!,
+      // updateNotice가 이번에 새로 안 넘어왔으면(undefined) 기존 값을 건드리지 않는다.
+      ...(updateNotice !== undefined ? { updateNotice } : {}),
     },
   });
 }
@@ -169,7 +172,7 @@ export async function crawlAndPersistAll(options: CrawlAndPersistOptions = {}): 
           ? await parseJinhakapplyDetail(m.detailUrl!, m.name)
           : await parseUwayDetail(m.detailUrl!, m.name);
       const capturedAt = detail.capturedAt ?? new Date();
-      const university = await persistUniversity(m);
+      const university = await persistUniversity(m, detail.updateNotice);
 
       for (const s of selections) {
         const match = matchSelection(detail, s);
