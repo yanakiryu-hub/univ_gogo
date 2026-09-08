@@ -37,6 +37,7 @@ function renderUniversities(universities) {
             <td>${ratioBadgeHtml(d.ratio)}</td>
             <td>${fmtUpdatedAt(at.capturedAt)}</td>
             <td class="notice-cell">${u.updateNotice ?? "-"}</td>
+            <td>${prevYearRatioHtml(u.name, d.name)}</td>
           </tr>
         `);
       }
@@ -63,6 +64,7 @@ function renderUniversities(universities) {
               <th>경쟁률</th>
               <th>마지막 업데이트</th>
               <th>업데이트 안내</th>
+              <th>26학년도 경쟁률</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>
