@@ -133,6 +133,25 @@ tbody td {
 
 tbody tr:hover { background: #fafbff; }
 
+/* 가로 스크롤 시 1열(대학)은 고정 */
+.table-scroll th:first-child,
+.table-scroll td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  box-shadow: 1px 0 0 #e2e3ea;
+}
+.table-scroll thead th:first-child {
+  background: #f0f1f5;
+  z-index: 2;
+}
+.table-scroll tbody td:first-child {
+  background: #fff;
+}
+.table-scroll tbody tr:hover td:first-child {
+  background: #fafbff;
+}
+
 @media (max-width: 600px) {
   table { min-width: 560px; font-size: 12.5px; }
   thead th, tbody td { padding: 6px 8px; }
