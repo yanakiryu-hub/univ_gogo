@@ -142,6 +142,7 @@ function renderChart() {
     const color = PALETTE[i % PALETTE.length];
     return {
       label: `${r.university} · ${r.department}`,
+      shortLabel: r.university,
       data: times.map((t) => (t in byTime ? byTime[t] : null)),
       borderColor: color,
       backgroundColor: color,
@@ -152,15 +153,53 @@ function renderChart() {
     };
   });
 
+  // 범례만으로는 어떤 선이 어느 대학인지 찾기 번거로우니, 각 선의 끝에 대학명을 직접 표시한다.
+  const endLabelPlugin = {
+    id: "endLabel",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      ctx.font = "600 11px -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textBaseline = "middle";
+      chart.data.datasets.forEach((ds, i) => {
+        const meta = chart.getDatasetMeta(i);
+        if (meta.hidden) return;
+        let lastIdx = -1;
+        for (let j = ds.data.length - 1; j >= 0; j--) {
+          if (ds.data[j] !== null && ds.data[j] !== undefined) {
+            lastIdx = j;
+            break;
+          }
+        }
+        if (lastIdx === -1) return;
+        const point = meta.data[lastIdx];
+        if (!point) return;
+        const x = point.x + 6;
+        const y = point.y;
+        const text = ds.shortLabel || ds.label;
+        const textWidth = ctx.measureText(text).width;
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.fillRect(x - 2, y - 8, textWidth + 4, 16);
+        ctx.fillStyle = ds.borderColor;
+        ctx.fillText(text, x, y);
+      });
+      ctx.restore();
+    },
+  };
+
   trendChart = new Chart(trendCanvas, {
     type: "line",
     data: {
       labels: times.map(fmtShort),
       datasets,
     },
+    plugins: [endLabelPlugin],
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { right: 90 },
+      },
       interaction: { mode: "index", intersect: false },
       plugins: {
         legend: {
