@@ -62,17 +62,26 @@ export interface MatchResult {
 
 /**
  * 파싱된 대학 상세 데이터에서 targets.ts에 적은 전형/학과와 가장 근접하게 일치하는 항목을 찾는다.
+ *
+ * 전형명이 여러 캠퍼스/전형에서 비슷하게 겹치는 경우가 있다
+ * (예: 경희대 "서울캠퍼스 학생부종합(네오르네상스전형)"과 "국제캠퍼스 학생부종합(네오르네상스전형)").
+ * 첫 번째로 이름이 맞는 전형만 보면 학과가 없는 엉뚱한 캠퍼스에서 멈출 수 있어서,
+ * 이름이 맞는 전형 후보를 전부 모은 뒤 그 안에 학과까지 있는 후보를 우선한다.
  */
 export function matchSelection(detail: UniversityRatioDetail, selection: TargetSelection): MatchResult {
-  const admissionType =
-    detail.admissionTypes.find((at) => fuzzyMatch(at.name, selection.admissionType)) ?? null;
+  const candidates = detail.admissionTypes.filter((at) => fuzzyMatch(at.name, selection.admissionType));
 
-  if (!admissionType) {
+  if (candidates.length === 0) {
     return { selection, admissionType: null, department: null };
   }
 
-  const department =
-    admissionType.departments.find((d) => fuzzyMatch(d.name, selection.department)) ?? null;
+  for (const at of candidates) {
+    const department = at.departments.find((d) => fuzzyMatch(d.name, selection.department));
+    if (department) {
+      return { selection, admissionType: at, department };
+    }
+  }
 
-  return { selection, admissionType, department };
+  // 이름은 맞는데 그 안에 학과가 없음 - 첫 후보를 보고해서 "확인 필요" 메시지에 어떤 전형이 걸렸는지 알 수 있게 한다.
+  return { selection, admissionType: candidates[0], department: null };
 }
