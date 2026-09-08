@@ -70,10 +70,39 @@ function renderChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       interaction: { mode: "index", intersect: false },
+      layout: { padding: { top: 4, right: 4, bottom: 4, left: 4 } },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { boxWidth: 14, padding: 14, font: { size: 12 } },
+        },
+        tooltip: { titleFont: { size: 12 }, bodyFont: { size: 12 } },
+      },
       scales: {
-        y: { type: "linear", position: "left", title: { display: true, text: "경쟁률 (:1)" } },
-        y1: { type: "linear", position: "right", title: { display: true, text: "지원인원" }, grid: { drawOnChartArea: false } },
+        x: {
+          ticks: {
+            font: { size: 11 },
+            maxRotation: 45,
+            minRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: window.innerWidth < 500 ? 5 : 10,
+          },
+        },
+        y: {
+          type: "linear",
+          position: "left",
+          title: { display: true, text: "경쟁률 (:1)", font: { size: 12 } },
+          ticks: { font: { size: 11 } },
+        },
+        y1: {
+          type: "linear",
+          position: "right",
+          title: { display: true, text: "지원인원", font: { size: 12 } },
+          ticks: { font: { size: 11 } },
+          grid: { drawOnChartArea: false },
+        },
       },
     },
   });

@@ -276,12 +276,23 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   border-radius: 6px;
   border: 1px solid #ddd;
   font-size: 13px;
+  max-width: 100%;
 }
 .chart-box {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   padding: 20px;
+}
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 340px;
+}
+@media (max-width: 600px) {
+  .chart-box { padding: 14px 10px; }
+  .chart-canvas-wrap { height: 260px; }
+  .chart-controls select { font-size: 12.5px; padding: 6px 8px; }
 }
 .back-link {
   display: inline-block;
