@@ -30,6 +30,5 @@ function getPrevYearRatio(universityName, departmentName) {
 
 function prevYearRatioHtml(universityName, departmentName) {
   const ratio = getPrevYearRatio(universityName, departmentName);
-  if (ratio === null || ratio === undefined) return '<span class="univ-sub">미확인</span>';
-  return `${ratio.toFixed(2)} : 1`;
+  return ratioBadgeHtml(ratio);
 }
