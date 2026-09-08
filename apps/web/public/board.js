@@ -132,9 +132,9 @@ function renderTable() {
           </td>
           <td>${r.admissionTypeName}</td>
           <td>${r.departmentName}</td>
-          <td>${r.capacityRaw ?? "-"}</td>
-          <td>${r.applicants ?? "-"}</td>
-          <td>${ratioBadgeHtml(r.ratio)}</td>
+          <td class="col-num">${r.capacityRaw ?? "-"}</td>
+          <td class="col-num">${r.applicants ?? "-"}</td>
+          <td class="col-num">${ratioBadgeHtml(r.ratio)}</td>
           <td>${fmtUpdatedAt(r.capturedAt)}</td>
           <td class="notice-cell">${r.updateNotice ?? "-"}</td>
         </tr>

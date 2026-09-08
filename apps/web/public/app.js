@@ -32,9 +32,9 @@ function renderUniversities(universities) {
             </td>
             <td>${at.name}</td>
             <td>${d.name}</td>
-            <td>${d.capacityRaw}</td>
-            <td>${d.applicants ?? "-"}</td>
-            <td>${ratioBadgeHtml(d.ratio)}</td>
+            <td class="col-num">${d.capacityRaw}</td>
+            <td class="col-num">${d.applicants ?? "-"}</td>
+            <td class="col-num">${ratioBadgeHtml(d.ratio)}</td>
             <td>${fmtUpdatedAt(at.capturedAt)}</td>
             <td class="notice-cell">${u.updateNotice ?? "-"}</td>
             <td>${prevYearRatioHtml(u.name, d.name)}</td>
@@ -59,9 +59,9 @@ function renderUniversities(universities) {
               <th>대학</th>
               <th>전형</th>
               <th>모집단위(학과)</th>
-              <th>모집인원</th>
-              <th>지원인원</th>
-              <th>경쟁률</th>
+              <th class="col-num">모집인원</th>
+              <th class="col-num">지원인원</th>
+              <th class="col-num">경쟁률</th>
               <th>마지막 업데이트</th>
               <th>업데이트 안내</th>
               <th>26학년도 경쟁률</th>

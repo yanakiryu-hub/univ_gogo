@@ -133,6 +133,12 @@ tbody td {
 
 tbody tr:hover { background: #fafbff; }
 
+/* 모집인원 · 지원인원 · 경쟁률은 숫자이므로 우측 정렬 */
+.col-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* 사이트 공지 원문은 길어질 수 있어 줄바꿈 허용 (다른 열은 한 줄 유지) */
 .notice-cell {
   white-space: normal;
