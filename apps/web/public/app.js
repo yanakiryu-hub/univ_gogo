@@ -24,10 +24,10 @@ function renderUniversities(universities) {
           <tr>
             <td class="col-univ">
               <a href="/university.html?id=${u.id}">${u.name}</a>
-              <span class="univ-sub">${u.region ?? ""} · ${u.status}</span>
+              <span class="univ-sub">${u.region ?? ""}</span>
             </td>
-            <td>${at.name}${at.quotaGroup ? ` <span class="univ-sub">(${at.quotaGroup})</span>` : ""}</td>
-            <td>${d.college ? d.college + " · " : ""}${d.name}</td>
+            <td>${at.name}</td>
+            <td>${d.name}</td>
             <td>${d.capacityRaw}</td>
             <td>${d.applicants ?? "-"}</td>
             <td>${ratioBadgeHtml(d.ratio)}</td>
@@ -45,19 +45,21 @@ function renderUniversities(universities) {
       <span class="badge badge-red">30:1↑</span>
     </div>
     <div class="univ-card">
-      <table>
-        <thead>
-          <tr>
-            <th>대학</th>
-            <th>전형</th>
-            <th>모집단위(학과)</th>
-            <th>모집인원</th>
-            <th>지원인원</th>
-            <th>경쟁률</th>
-          </tr>
-        </thead>
-        <tbody>${rows.join("")}</tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>대학</th>
+              <th>전형</th>
+              <th>모집단위(학과)</th>
+              <th>모집인원</th>
+              <th>지원인원</th>
+              <th>경쟁률</th>
+            </tr>
+          </thead>
+          <tbody>${rows.join("")}</tbody>
+        </table>
+      </div>
     </div>
   `;
 }

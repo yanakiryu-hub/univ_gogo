@@ -86,10 +86,10 @@ function renderTable() {
       if (r.status !== "ready") {
         return `
           <tr>
-            <td class="col-univ"><span class="univ-sub" style="display:block;">${r.university}</span></td>
+            <td class="col-univ">${r.university}</td>
             <td>${r.admissionType}</td>
             <td>${r.department}</td>
-            <td colspan="3" class="pending-note">아직 접수 시작 전이거나 데이터 없음</td>
+            <td colspan="3" class="pending-note">대기중</td>
           </tr>
         `;
       }
@@ -97,10 +97,9 @@ function renderTable() {
         <tr>
           <td class="col-univ">
             <a href="/university.html?id=${r.universityId ?? ""}">${r.university}</a>
-            <span class="univ-sub">${r.universityStatus ?? ""}</span>
           </td>
-          <td>${r.admissionTypeName}${r.quotaGroup ? ` <span class="univ-sub">(${r.quotaGroup})</span>` : ""}</td>
-          <td>${r.college ? r.college + " · " : ""}${r.departmentName}</td>
+          <td>${r.admissionTypeName}</td>
+          <td>${r.departmentName}</td>
           <td>${r.capacityRaw ?? "-"}</td>
           <td>${r.applicants ?? "-"}</td>
           <td>${ratioBadgeHtml(r.ratio)}</td>
