@@ -2,13 +2,13 @@ const lastUpdatedEl = document.getElementById("last-updated");
 const subTabsEl = document.getElementById("sub-tabs");
 const statCardsEl = document.getElementById("stat-cards");
 const tbodyEl = document.getElementById("board-tbody");
-const trendWrapEl = document.getElementById("trend-wrap");
-const trendLegendEl = document.getElementById("trend-legend");
+const trendCanvas = document.getElementById("trend-chart");
 
 const PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"];
 
 let allRows = [];
 let scope = "core"; // "core" | "all"
+let trendChart = null;
 
 function fmt(dt) {
   if (!dt) return "-";
@@ -117,13 +117,18 @@ function renderTable() {
   if (scrollEl) scrollEl.scrollLeft = prevScroll;
 }
 
-/* ---------------- trend chart ---------------- */
+/* ---------------- trend chart (Chart.js) ---------------- */
 function renderChart() {
   const rows = currentRows().filter((r) => r.status === "ready" && r.snapshots && r.snapshots.length > 0);
 
+  if (trendChart) {
+    trendChart.destroy();
+    trendChart = null;
+  }
+
   if (rows.length === 0) {
-    trendWrapEl.innerHTML = '<div class="pending-note">아직 시간대별 데이터가 쌓이지 않았습니다.</div>';
-    trendLegendEl.innerHTML = "";
+    const ctx = trendCanvas.getContext("2d");
+    ctx.clearRect(0, 0, trendCanvas.width, trendCanvas.height);
     return;
   }
 
@@ -131,122 +136,63 @@ function renderChart() {
   const timeSet = new Set();
   rows.forEach((r) => r.snapshots.forEach((s) => timeSet.add(s.capturedAt)));
   const times = [...timeSet].sort();
-  const n = times.length;
 
-  const series = rows.map((r, i) => {
+  const datasets = rows.map((r, i) => {
     const byTime = Object.fromEntries(r.snapshots.map((s) => [s.capturedAt, s.ratio]));
+    const color = PALETTE[i % PALETTE.length];
     return {
       label: `${r.university} · ${r.department}`,
-      color: PALETTE[i % PALETTE.length],
-      values: times.map((t) => (t in byTime ? byTime[t] : null)),
+      data: times.map((t) => (t in byTime ? byTime[t] : null)),
+      borderColor: color,
+      backgroundColor: color,
+      spanGaps: true,
+      tension: 0.25,
+      pointRadius: 3,
+      pointHoverRadius: 5,
     };
   });
 
-  const yMax = Math.max(1, ...series.flatMap((s) => s.values.filter((v) => v !== null))) * 1.15;
-
-  const W = 900, H = 420;
-  const M = { top: 20, right: 130, bottom: 40, left: 44 };
-  const plotW = W - M.left - M.right;
-  const plotH = H - M.top - M.bottom;
-  const x = (i) => (n <= 1 ? M.left : M.left + (i * plotW) / (n - 1));
-  const y = (v) => M.top + plotH - (v / yMax) * plotH;
-  const yTicks = 4;
-
-  let svg = `<svg class="trend-chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
-
-  for (let t = 0; t <= yTicks; t++) {
-    const v = (yMax / yTicks) * t;
-    svg += `<line class="gridline" x1="${M.left}" x2="${W - M.right}" y1="${y(v)}" y2="${y(v)}" />`;
-    svg += `<text class="axis-label" x="${M.left - 8}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`;
-  }
-  svg += `<text class="axis-title" x="12" y="${M.top - 4}">경쟁률 (:1)</text>`;
-  svg += `<line class="baseline" x1="${M.left}" x2="${W - M.right}" y1="${y(0)}" y2="${y(0)}" />`;
-
-  times.forEach((t, i) => {
-    if (n > 8 && i % Math.ceil(n / 8) !== 0 && i !== n - 1) return;
-    const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
-    svg += `<text class="axis-label" x="${x(i)}" y="${H - M.bottom + 18}" text-anchor="${anchor}">${fmtShort(t)}</text>`;
+  trendChart = new Chart(trendCanvas, {
+    type: "line",
+    data: {
+      labels: times.map(fmtShort),
+      datasets,
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { boxWidth: 12, padding: 10, font: { size: 11 } },
+        },
+        tooltip: {
+          titleFont: { size: 12 },
+          bodyFont: { size: 12 },
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y === null ? "-" : ctx.parsed.y.toFixed(2) + " : 1"}`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            font: { size: 11 },
+            maxRotation: 45,
+            minRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: window.innerWidth < 500 ? 5 : 10,
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "경쟁률 (:1)", font: { size: 12 } },
+          ticks: { font: { size: 11 }, callback: (v) => Number(v).toFixed(1) },
+        },
+      },
+    },
   });
-
-  series.forEach((s) => {
-    const pts = s.values.map((v, i) => (v === null ? null : [x(i), y(v)]));
-    const segs = [];
-    let cur = [];
-    pts.forEach((p) => {
-      if (p === null) {
-        if (cur.length) segs.push(cur);
-        cur = [];
-      } else {
-        cur.push(p);
-      }
-    });
-    if (cur.length) segs.push(cur);
-
-    segs.forEach((seg) => {
-      const d = seg.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
-      svg += `<path class="series-line" d="${d}" stroke="${s.color}" />`;
-    });
-    pts.forEach((p) => {
-      if (p) svg += `<circle class="series-dot" cx="${p[0]}" cy="${p[1]}" r="3" fill="${s.color}" />`;
-    });
-
-    const lastIdx = [...s.values].reverse().findIndex((v) => v !== null);
-    if (lastIdx !== -1) {
-      const idx = s.values.length - 1 - lastIdx;
-      svg += `<text class="end-label" x="${x(idx) + 8}" y="${y(s.values[idx]) + 4}" fill="${s.color}">${s.label.split(" · ")[0].replace("대학교", "")}</text>`;
-    }
-  });
-
-  svg += `<g id="crosshair-group"></g>`;
-  svg += `</svg>`;
-
-  trendWrapEl.innerHTML = svg;
-
-  const svgEl = trendWrapEl.querySelector("svg");
-  const crosshairGroup = svgEl.querySelector("#crosshair-group");
-  let tooltipEl = null;
-
-  svgEl.addEventListener("mousemove", (e) => {
-    const rect = svgEl.getBoundingClientRect();
-    const scaleX = W / rect.width;
-    const px = (e.clientX - rect.left) * scaleX;
-    let idx = Math.round(((px - M.left) / plotW) * (n - 1));
-    idx = Math.max(0, Math.min(n - 1, idx));
-
-    crosshairGroup.innerHTML = `<line class="crosshair" x1="${x(idx)}" x2="${x(idx)}" y1="${M.top}" y2="${H - M.bottom}" />`;
-
-    const entries = series
-      .map((s) => ({ label: s.label, color: s.color, v: s.values[idx] }))
-      .filter((e) => e.v !== null)
-      .sort((a, b) => b.v - a.v);
-
-    if (!tooltipEl) {
-      tooltipEl = document.createElement("div");
-      tooltipEl.className = "trend-tooltip";
-      trendWrapEl.appendChild(tooltipEl);
-    }
-    const leftPct = (x(idx) / W) * 100;
-    const flip = leftPct > 58;
-    tooltipEl.style.left = flip ? "" : `calc(${leftPct}% + 14px)`;
-    tooltipEl.style.right = flip ? `calc(${100 - leftPct}% + 14px)` : "";
-    tooltipEl.innerHTML =
-      `<div class="time">${fmtShort(times[idx])}</div>` +
-      entries
-        .map(
-          (e) =>
-            `<div class="row"><span class="name"><span class="dot" style="background:${e.color}"></span>${e.label}</span><span class="val">${e.v.toFixed(2)} : 1</span></div>`
-        )
-        .join("");
-  });
-  svgEl.addEventListener("mouseleave", () => {
-    crosshairGroup.innerHTML = "";
-    if (tooltipEl) tooltipEl.remove();
-    tooltipEl = null;
-  });
-
-  trendLegendEl.innerHTML = series
-    .map((s) => `<span class="item"><span class="swatch" style="background:${s.color}"></span>${s.label}</span>`)
-    .join("");
 }
 
 /* ---------------- glue ---------------- */
