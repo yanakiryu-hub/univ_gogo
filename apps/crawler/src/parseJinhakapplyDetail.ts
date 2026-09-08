@@ -31,10 +31,27 @@ function parseCapturedAt(raw: string | null): Date | null {
   return kstToUtcDate(Number(y), Number(mo), Number(d), h, Number(mi));
 }
 
+type ColumnRole = "group" | "unit" | "capacity" | "applicants" | "ratio" | "ignore";
+
+/**
+ * 대학마다 컬럼 구성이 다르다.
+ * 대부분: [모집단위, 모집인원, 지원인원, 경쟁률] (college 없음)
+ * 건국대(서울) 등 일부: [대학(rowspan), 모집단위, 모집인원, 지원인원, 경쟁률]
+ * 고정 offset을 가정하지 않고 헤더 <th> 텍스트로 역할을 분류한다.
+ */
+function classifyHeader(text: string): ColumnRole {
+  if (text.includes("모집단위")) return "unit";
+  if (text.includes("모집") && text.includes("인원")) return "capacity";
+  if (text.includes("지원") && text.includes("인원")) return "applicants";
+  if (text.includes("경쟁률")) return "ratio";
+  if (text.includes("안내") || text.includes("홈페이지")) return "ignore";
+  return "group"; // 대학/캠퍼스 등 rowspan 그룹 컬럼
+}
+
 /**
  * addon.jinhakapply.com 상세 페이지를 파싱한다.
- * 전형별로 <div id="SelTypeXXX"> 안에 "모집단위/모집인원/지원인원/경쟁률" 4열 표가 들어있고,
- * uwayapply와 달리 단과대학(college) 컬럼이 없는 평탄한 구조라 rowspan 처리가 필요 없다.
+ * 전형별로 <div id="SelTypeXXX"> 안에 표가 들어있고, rowspan으로 생략된 앞쪽 그룹 컬럼(대학 등)은
+ * 마지막 값을 이어받는다 (parseUwayDetail.ts와 동일한 방식).
  */
 export async function parseJinhakapplyDetail(
   url: string,
@@ -57,23 +74,61 @@ export async function parseJinhakapplyDetail(
     const quotaMatch = fullName.match(/\((정원내|정원외)\)$/);
     const quotaGroup = quotaMatch ? quotaMatch[1] : null;
 
+    const $table = $div.find("table.tableRatio3").first();
+    const roles: ColumnRole[] = $table
+      .find("tr")
+      .first()
+      .find("th")
+      .toArray()
+      .map((th) => classifyHeader($(th).text().trim()));
+
+    if (roles.length === 0) return;
+
+    const unitIdx = roles.indexOf("unit");
+    const capIdx = roles.indexOf("capacity");
+    const appIdx = roles.indexOf("applicants");
+    const ratioIdx = roles.indexOf("ratio");
+
     const departments: DepartmentRatio[] = [];
+    const carry: Record<number, string> = {};
 
-    $div.find("table.tableRatio3 tr").each((__, tr) => {
+    $table.find("tr").each((__, tr) => {
       const $tr = $(tr);
-      if ($tr.hasClass("total")) return; // 총계 행 제외 (아래에서 별도 합산)
-      const tds = $tr.find("> td");
-      if (tds.length < 4) return; // 헤더행 제외
+      if ($tr.hasClass("total")) return; // 총계 행 제외
+      const cells = $tr.find("> td").toArray();
+      if (cells.length === 0) return; // 헤더행 제외
 
-      const name = tds.eq(0).text().trim();
+      const missing = roles.length - cells.length;
+      if (missing < 0 || missing >= roles.length) return; // 예상치 못한 구조면 스킵
+
+      const values: string[] = new Array(roles.length);
+      let cellIdx = 0;
+      for (let i = 0; i < roles.length; i++) {
+        if (i < missing) {
+          values[i] = carry[i] ?? "";
+        } else {
+          const text = $(cells[cellIdx]).text().trim();
+          values[i] = text;
+          if (roles[i] === "group") carry[i] = text;
+          cellIdx++;
+        }
+      }
+
+      const name = unitIdx >= 0 ? values[unitIdx] : "";
       if (!name) return;
 
-      const capacityRaw = tds.eq(1).text().trim();
-      const applicantsRaw = tds.eq(2).text().trim();
-      const ratioRaw = tds.eq(3).text().trim();
+      const college =
+        roles
+          .map((r, i) => (r === "group" ? values[i] : null))
+          .filter((v): v is string => Boolean(v))
+          .join(" ") || null;
+
+      const capacityRaw = capIdx >= 0 ? values[capIdx] : "";
+      const applicantsRaw = appIdx >= 0 ? values[appIdx] : "";
+      const ratioRaw = ratioIdx >= 0 ? values[ratioIdx] : "";
 
       departments.push({
-        college: null,
+        college,
         name,
         capacityRaw,
         capacity: parseInt10(capacityRaw),

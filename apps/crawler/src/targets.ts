@@ -16,7 +16,7 @@ export const TARGET_SELECTIONS: TargetSelection[] = [
   { university: "숙명여자대학교", department: "일본학과", admissionType: "숙명인재(면접형)", core: true },
   { university: "한국외국어대학교", department: "태국학과", admissionType: "면접형", core: true },
   { university: "숭실대학교", department: "일어일문", admissionType: "SSU미래인재(면접형)", core: true },
-  { university: "건국대학교", department: "일어교육과", admissionType: "KU자기추천", core: true },
+  { university: "건국대학교(서울)", department: "일어교육과", admissionType: "KU자기추천", core: true },
   { university: "국민대학교", department: "동아시아국제학부", admissionType: "국민프런티어", core: true },
   { university: "한국외국어대학교", department: "이란학과", admissionType: "서류형", core: true },
   { university: "경희대학교", department: "일본어학과", admissionType: "네오르네상스" },
