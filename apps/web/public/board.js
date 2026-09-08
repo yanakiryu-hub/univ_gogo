@@ -25,6 +25,34 @@ function rowLabel(r) {
   return `${r.university} · ${r.department} (${r.admissionType})`;
 }
 
+// 그래프 라인 끝 라벨용 통상 줄임 표현. 같은 줄임말을 쓰는 대학(예: 외대)은 학과로 한 글자 더 구분한다.
+const UNIV_SHORT_NAME = {
+  "숙명여자대학교": "숙대",
+  "한국외국어대학교": "외대",
+  "숭실대학교": "숭실대",
+  "건국대학교(서울)": "건대",
+  "국민대학교": "국민대",
+  "경희대학교": "경희대",
+  "경기대학교": "경기대",
+  "명지대학교": "명지대",
+  "광운대학교": "광운대",
+  "성신여자대학교": "성신여대",
+  "가천대학교": "가천대",
+  "중앙대학교": "중앙대",
+  "서울여자대학교": "서울여대",
+  "인하대학교": "인하대",
+  "인천대학교": "인천대",
+};
+
+function shortLabelFor(university, department) {
+  const base = UNIV_SHORT_NAME[university] || university;
+  if (university === "한국외국어대학교") {
+    if (department.includes("태국")) return `${base}(태)`;
+    if (department.includes("이란") || department.includes("페르시아")) return `${base}(페)`;
+  }
+  return base;
+}
+
 function currentRows() {
   return scope === "core" ? allRows.filter((r) => r.core) : allRows;
 }
@@ -145,7 +173,7 @@ function renderChart() {
     const color = PALETTE[i % PALETTE.length];
     return {
       label: `${r.university} · ${r.department}`,
-      shortLabel: r.university,
+      shortLabel: shortLabelFor(r.university, r.department),
       data: times.map((t) => (t in byTime ? byTime[t] : null)),
       borderColor: color,
       backgroundColor: color,
