@@ -7,7 +7,7 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "dedupe": "node scripts/dedupe-departments.mjs",
-    "push": "prisma db push --skip-generate --accept-data-loss",
+    "push": "node scripts/dedupe-departments.mjs && prisma db push --skip-generate --accept-data-loss",
     "studio": "prisma studio"
   },
   "dependencies": {
