@@ -107,7 +107,7 @@ function renderTable() {
           <td>${r.capacityRaw ?? "-"}</td>
           <td>${r.applicants ?? "-"}</td>
           <td>${ratioBadgeHtml(r.ratio)}</td>
-          <td>${updateCycleHtml(r.detailSource)}</td>
+          <td>${fmtUpdatedAt(r.capturedAt)}</td>
         </tr>
       `;
     })

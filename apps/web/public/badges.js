@@ -16,16 +16,17 @@ function ratioBadgeHtml(ratio) {
 }
 
 /**
- * 대학의 경쟁률 크롤링 주기를 소스별로 표시한다.
- * uwayapply: Railway 서버가 10분마다 자동 크롤링
- * jinhakapply: 해외 IP 차단 때문에 로컬(한국 IP)에서 10분마다 크롤링해 전송
+ * 대학 사이트 자체가 마지막으로 값을 갱신한 시각(capturedAt)을 표시한다.
+ * (우리가 몇 분마다 크롤링하는지가 아니라, 사이트에 찍힌 실제 갱신 시각 - 대학마다 다르다)
  */
-function updateCycleHtml(detailSource) {
-  if (detailSource === "uwayapply") {
-    return `10분마다 <span class="univ-sub">(유웨이)</span>`;
-  }
-  if (detailSource === "jinhakapply") {
-    return `10분마다 <span class="univ-sub">(진학사)</span>`;
-  }
-  return "-";
+function fmtUpdatedAt(dt) {
+  if (!dt) return "-";
+  return new Date(dt).toLocaleString("ko-KR", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Seoul",
+  });
 }

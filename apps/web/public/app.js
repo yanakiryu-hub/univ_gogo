@@ -35,7 +35,7 @@ function renderUniversities(universities) {
             <td>${d.capacityRaw}</td>
             <td>${d.applicants ?? "-"}</td>
             <td>${ratioBadgeHtml(d.ratio)}</td>
-            <td>${updateCycleHtml(u.detailSource)}</td>
+            <td>${fmtUpdatedAt(at.capturedAt)}</td>
           </tr>
         `);
       }
@@ -60,7 +60,7 @@ function renderUniversities(universities) {
               <th>모집인원</th>
               <th>지원인원</th>
               <th>경쟁률</th>
-              <th>업데이트 주기</th>
+              <th>마지막 업데이트</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>
