@@ -75,6 +75,10 @@ function renderStatCards() {
 
 /* ---------------- table ---------------- */
 function renderTable() {
+  // 주기적으로 다시 그릴 때 가로 스크롤 위치가 리셋되지 않도록 기억했다가 복원한다.
+  const scrollEl = tbodyEl.closest(".table-scroll");
+  const prevScroll = scrollEl?.scrollLeft ?? 0;
+
   const rows = currentRows();
   if (rows.length === 0) {
     tbodyEl.innerHTML = '<tr><td colspan="6" class="pending-note">표시할 항목이 없습니다.</td></tr>';
@@ -107,6 +111,8 @@ function renderTable() {
       `;
     })
     .join("");
+
+  if (scrollEl) scrollEl.scrollLeft = prevScroll;
 }
 
 /* ---------------- trend chart ---------------- */

@@ -11,6 +11,10 @@ function fmt(dt) {
 }
 
 function renderUniversities(universities) {
+  // 15초마다 다시 그리는데, 이때 표를 통째로 교체하면 가로 스크롤 위치가 리셋되니
+  // 다시 그리기 전에 스크롤 위치를 기억해뒀다가 그린 뒤 복원한다.
+  const prevScroll = appEl.querySelector(".table-scroll")?.scrollLeft ?? 0;
+
   if (universities.length === 0) {
     appEl.innerHTML = '<div class="empty">아직 크롤링된 대학이 없습니다. RUN 버튼을 눌러 시작하세요.</div>';
     return;
@@ -62,6 +66,9 @@ function renderUniversities(universities) {
       </div>
     </div>
   `;
+
+  const scrollEl = appEl.querySelector(".table-scroll");
+  if (scrollEl) scrollEl.scrollLeft = prevScroll;
 }
 
 function renderCrawlStatus(status) {
