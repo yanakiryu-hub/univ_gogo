@@ -81,7 +81,7 @@ function renderTable() {
 
   const rows = currentRows();
   if (rows.length === 0) {
-    tbodyEl.innerHTML = '<tr><td colspan="6" class="pending-note">표시할 항목이 없습니다.</td></tr>';
+    tbodyEl.innerHTML = '<tr><td colspan="7" class="pending-note">표시할 항목이 없습니다.</td></tr>';
     return;
   }
 
@@ -93,7 +93,7 @@ function renderTable() {
             <td class="col-univ">${r.university}</td>
             <td>${r.admissionType}</td>
             <td>${r.department}</td>
-            <td colspan="3" class="pending-note">대기중</td>
+            <td colspan="4" class="pending-note">대기중</td>
           </tr>
         `;
       }
@@ -107,6 +107,7 @@ function renderTable() {
           <td>${r.capacityRaw ?? "-"}</td>
           <td>${r.applicants ?? "-"}</td>
           <td>${ratioBadgeHtml(r.ratio)}</td>
+          <td>${updateCycleHtml(r.detailSource)}</td>
         </tr>
       `;
     })

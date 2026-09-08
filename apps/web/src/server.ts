@@ -128,6 +128,7 @@ app.get("/api/board", async (_req, res) => {
           status: "ready" as const,
           universityId: uni.id,
           universityStatus: uni.status,
+          detailSource: uni.detailSource,
           admissionTypeName: at.name,
           quotaGroup: at.quotaGroup,
           departmentName: d.name,
