@@ -16,6 +16,18 @@ function ratioBadgeHtml(ratio) {
 }
 
 /**
+ * 경쟁률 배지와 같은 구간 규칙으로 대학명 텍스트 색상 클래스를 반환한다.
+ */
+function ratioColorClass(ratio) {
+  if (ratio === null || ratio === undefined) return "";
+  if (ratio >= 30) return "rate-red";
+  if (ratio >= 20) return "rate-orange";
+  if (ratio >= 10) return "rate-magenta";
+  if (ratio >= 5) return "rate-blue";
+  return "";
+}
+
+/**
  * 대학 사이트 자체가 마지막으로 값을 갱신한 시각(capturedAt)을 표시한다.
  * (우리가 몇 분마다 크롤링하는지가 아니라, 사이트에 찍힌 실제 갱신 시각 - 대학마다 다르다)
  */

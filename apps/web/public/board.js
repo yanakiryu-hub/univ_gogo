@@ -128,7 +128,7 @@ function renderTable() {
       return `
         <tr>
           <td class="col-univ">
-            <a href="/university.html?id=${r.universityId ?? ""}">${r.university}</a>
+            <a class="${ratioColorClass(r.ratio)}" href="/university.html?id=${r.universityId ?? ""}">${r.university}</a>
           </td>
           <td>${r.admissionTypeName}</td>
           <td>${r.departmentName}</td>

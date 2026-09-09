@@ -27,7 +27,7 @@ function renderUniversities(universities) {
         rows.push(`
           <tr>
             <td class="col-univ">
-              <a href="/university.html?id=${u.id}">${u.name}</a>
+              <a class="${ratioColorClass(d.ratio)}" href="/university.html?id=${u.id}">${u.name}</a>
               <span class="univ-sub">${u.region ?? ""}</span>
             </td>
             <td>${at.name}</td>
@@ -37,7 +37,7 @@ function renderUniversities(universities) {
             <td class="col-num">${ratioBadgeHtml(d.ratio)}</td>
             <td>${fmtUpdatedAt(at.capturedAt)}</td>
             <td class="notice-cell">${u.updateNotice ?? "-"}</td>
-            <td>${prevYearRatioHtml(u.name, d.name)}</td>
+            <td class="col-num">${prevYearRatioHtml(u.name, d.name)}</td>
           </tr>
         `);
       }
@@ -64,7 +64,7 @@ function renderUniversities(universities) {
               <th class="col-num">경쟁률</th>
               <th>마지막 업데이트</th>
               <th>업데이트 안내</th>
-              <th>26학년도 경쟁률</th>
+              <th class="col-num">26학년도 경쟁률</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>

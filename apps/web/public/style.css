@@ -194,6 +194,12 @@ tbody tr:hover { background: #fafbff; }
 .badge-red     { background: #fbe6e6; color: #b23434; border-color: #f4c6c6; }
 .badge-key { display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* 대학명도 경쟁률 배지와 같은 구간 기준으로 색을 입혀 한눈에 위험도를 알 수 있게 한다 */
+.col-univ a.rate-blue    { color: #2158c9; }
+.col-univ a.rate-magenta { color: #b32e6b; }
+.col-univ a.rate-orange  { color: #c15a15; }
+.col-univ a.rate-red     { color: #b23434; }
+
 /* ---------- 사이트 상단 탭 (홈 / 경쟁률보드) ---------- */
 .site-nav {
   display: flex;
