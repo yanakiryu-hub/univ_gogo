@@ -26,8 +26,8 @@ function renderUniversities(universities) {
       for (const d of at.departments) {
         rows.push(`
           <tr>
-            <td class="col-univ">
-              <a class="${ratioColorClass(d.ratio)}" href="/university.html?id=${u.id}">${u.name}</a>
+            <td class="col-univ ${ratioColorClass(d.ratio)}">
+              <a href="/university.html?id=${u.id}">${u.name}</a>
               <span class="univ-sub">${u.region ?? ""}</span>
             </td>
             <td>${at.name}</td>

@@ -194,11 +194,23 @@ tbody tr:hover { background: #fafbff; }
 .badge-red     { background: #fbe6e6; color: #b23434; border-color: #f4c6c6; }
 .badge-key { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* 대학명도 경쟁률 배지와 같은 구간 기준으로 색을 입혀 한눈에 위험도를 알 수 있게 한다 */
-.col-univ a.rate-blue    { color: #2158c9; }
-.col-univ a.rate-magenta { color: #b32e6b; }
-.col-univ a.rate-orange  { color: #c15a15; }
-.col-univ a.rate-red     { color: #b23434; }
+/* 대학명 셀도 경쟁률 배지와 같은 구간 기준으로 텍스트/배경 색을 입혀 한눈에 위험도를 알 수 있게 한다.
+   1열은 가로 스크롤 시 고정(sticky)되므로, 그 배경 규칙(.table-scroll td:first-child 등)보다
+   우선 적용되도록 동일한 상세도로 선택자를 맞춰준다. */
+.col-univ.rate-blue    a { color: #2158c9; }
+.col-univ.rate-magenta a { color: #b32e6b; }
+.col-univ.rate-orange  a { color: #c15a15; }
+.col-univ.rate-red     a { color: #b23434; }
+
+.table-scroll tbody td.col-univ.rate-blue     { background: #e7effd; }
+.table-scroll tbody td.col-univ.rate-magenta  { background: #fce7f0; }
+.table-scroll tbody td.col-univ.rate-orange   { background: #fdeee1; }
+.table-scroll tbody td.col-univ.rate-red      { background: #fbe6e6; }
+
+.table-scroll tbody tr:hover td.col-univ.rate-blue     { background: #dce7fb; }
+.table-scroll tbody tr:hover td.col-univ.rate-magenta  { background: #f8dbe9; }
+.table-scroll tbody tr:hover td.col-univ.rate-orange   { background: #fbe3d0; }
+.table-scroll tbody tr:hover td.col-univ.rate-red      { background: #f8d6d6; }
 
 /* ---------- 사이트 상단 탭 (홈 / 경쟁률보드) ---------- */
 .site-nav {
