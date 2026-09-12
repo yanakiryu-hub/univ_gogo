@@ -560,6 +560,34 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
 }
 .interview-homepage-link:hover { text-decoration: underline; }
 
+/* 서류/면접 배점 안내 — 카드 맨 아래, 절차 일정과는 톤을 달리해(짙은 배경) 구분되는
+   "참고 자료" 임을 알리고, 라벨을 고정 폭으로 정렬해 두 값이 나란히 비교되게 한다 */
+.interview-score-box {
+  background: #1a1a2e;
+  border-radius: 10px;
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.score-row {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+.score-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #8b8fc4;
+  letter-spacing: 0.2px;
+}
+.score-value {
+  font-size: 12px;
+  color: #e8e9f5;
+  line-height: 1.5;
+}
+
 @media (max-width: 600px) {
   .interview-grid { grid-template-columns: 1fr; }
   .interview-card { padding: 16px; }

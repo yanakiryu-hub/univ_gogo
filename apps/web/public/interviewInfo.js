@@ -17,6 +17,8 @@ const INTERVIEW_INFO = [
     interviewDate: "11월 28일(토)",
     finalAnnounce: "12월 18일(금) 17시",
     additionalAnnounce: "12월 24일(목) ~ 12월 29일(화) 18시",
+    docScore: "진로 45 / 탐구 35 / 공동체 20 (학업 독립항목 無)",
+    interviewScore: "진로역량 + 의사소통·태도 (30%)",
     note: null,
   },
   {
@@ -31,6 +33,8 @@ const INTERVIEW_INFO = [
     interviewDate: "11월 21일(토)",
     finalAnnounce: "12월 18일(금)",
     additionalAnnounce: "12월 24일(목) ~ 12월 29일(화)",
+    docScore: "학업 30 / 진로 50 / 공동체 20",
+    interviewScore: "진로개발 60 / 협력소통 40 (50%) · 2027 학업 항목 삭제",
     note: null,
   },
   {
@@ -45,6 +49,8 @@ const INTERVIEW_INFO = [
     interviewDate: "11월 27일(금)",
     finalAnnounce: "12월 18일(금) 10시",
     additionalAnnounce: "12월 24일(목) ~ 12월 29일(화)",
+    docScore: "학업 30 / 진로 50 / 공동체 20",
+    interviewScore: "전공적합성 50 / 잠재력 50 (50%) · 학업 無",
     note: null,
   },
   {
@@ -59,6 +65,8 @@ const INTERVIEW_INFO = [
     interviewDate: "12월 5일(토)",
     finalAnnounce: "12월 18일(금) 14시",
     additionalAnnounce: "12월 24일(목) 10시 ~ 12월 29일(화) 18시",
+    docScore: "학업 30 / 진로 40 / 공동체 30",
+    interviewScore: "학업 30(탐구력만) / 진로 40 / 공동체 30 (30%)",
     note: null,
   },
   {
@@ -73,6 +81,8 @@ const INTERVIEW_INFO = [
     interviewDate: "11월 22일(일)",
     finalAnnounce: "12월 18일(금) 17시",
     additionalAnnounce: "12월 24일(목) ~ 12월 29일(화) 18시",
+    docScore: "학업 30 / 진로 40 / 공동체 30",
+    interviewScore: "서류기반 면접 (30%) · 역전율 인문 46.4%",
     note: null,
   },
   {
@@ -87,6 +97,8 @@ const INTERVIEW_INFO = [
     interviewDate: "없음",
     finalAnnounce: "12월 18일(금)",
     additionalAnnounce: "12월 24일(목) ~ 12월 29일(화)",
+    docScore: "학업 50 / 진로 30 / 공동체 20",
+    interviewScore: "면접 없음",
     note: "서류형 전형 - 면접 없음",
   },
 ];
@@ -104,6 +116,8 @@ function getInterviewInfo(university, department) {
       interviewDate: null,
       finalAnnounce: null,
       additionalAnnounce: null,
+      docScore: null,
+      interviewScore: null,
       note: null,
     }
   );

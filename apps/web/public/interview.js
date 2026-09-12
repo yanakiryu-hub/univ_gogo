@@ -102,6 +102,23 @@ function renderCards(rows) {
 
           ${info.note ? `<div class="interview-note">${info.note}</div>` : ""}
           ${info.homepageUrl ? `<a class="interview-homepage-link" href="${info.homepageUrl}" target="_blank" rel="noopener">입학처 홈페이지 &rarr;</a>` : ""}
+
+          ${
+            info.docScore || info.interviewScore
+              ? `
+            <div class="interview-score-box">
+              <div class="score-row">
+                <span class="score-label">서류 배점</span>
+                <span class="score-value">${info.docScore ?? "-"}</span>
+              </div>
+              <div class="score-row">
+                <span class="score-label">면접 배점</span>
+                <span class="score-value">${info.interviewScore ?? "-"}</span>
+              </div>
+            </div>
+          `
+              : ""
+          }
         </div>
       `;
     })
