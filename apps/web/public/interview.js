@@ -23,7 +23,11 @@ function stage1Ratio(applicants, capacity, multiplier) {
 }
 
 function renderCards(rows) {
-  const coreRows = rows.filter((r) => r.core);
+  // 1차 합격자 발표가 빠른 순으로 카드를 배치하고, 서류형처럼 1차 발표 자체가 없는
+  // 전형(step1SortKey: Infinity)은 항상 맨 뒤로 보낸다.
+  const coreRows = rows
+    .filter((r) => r.core)
+    .sort((a, b) => getInterviewInfo(a.university, a.department).step1SortKey - getInterviewInfo(b.university, b.department).step1SortKey);
 
   if (coreRows.length === 0) {
     cardsEl.innerHTML = '<div class="empty">표시할 학교가 없습니다.</div>';
