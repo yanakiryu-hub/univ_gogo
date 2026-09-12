@@ -119,7 +119,7 @@ function renderCards(rows) {
               ? `
             <div class="interview-links">
               ${info.homepageUrl ? `<a class="interview-homepage-link" href="${info.homepageUrl}" target="_blank" rel="noopener">입학처 홈페이지 &rarr;</a>` : ""}
-              ${info.locationUrl ? `<a class="interview-location-link" href="${info.locationUrl}" target="_blank" rel="noopener">면접 장소 지도 &rarr;</a>` : ""}
+              ${info.locationUrl ? `<a class="interview-location-link" href="${info.locationUrl}" target="_blank" rel="noopener">학교 위치 지도 &rarr;</a>` : ""}
             </div>
           `
               : ""

@@ -77,7 +77,7 @@ const INTERVIEW_INFO = [
     university: "국민대학교",
     department: "동아시아국제학부",
     multiplier: 3,
-    homepageUrl: null,
+    homepageUrl: "https://admission.kookmin.ac.kr/intro.html",
     locationUrl: "https://kko.to/3a8uR6AjKE",
     step1Announce: "11월 17일(화) 14시",
     step1SortKey: 1117,
