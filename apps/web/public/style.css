@@ -472,40 +472,71 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   color: #1a1a2e;
 }
 
-.interview-schedule {
+/* 가장 궁금해할 두 날짜(면접평가일/합격자 발표)를 카드 상단에 큼직한 박스로 강조한다.
+   나머지 절차성 일정과 확실히 다른 시각적 무게를 줘서 "핵심만 먼저 눈에 들어오게" 한다. */
+.interview-key-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.key-date-box {
+  background: #f7f7fb;
+  border-radius: 10px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
 }
-.sched-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13.5px;
+.key-date-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a3aa7;
+  letter-spacing: 0.2px;
 }
-.sched-label {
-  color: #888;
-  font-weight: 600;
-  flex: none;
-}
-.sched-value {
+.key-date-value {
+  font-size: 15px;
+  font-weight: 800;
   color: #1a1a2e;
-  font-weight: 600;
-  text-align: right;
+  line-height: 1.3;
 }
-.sched-tbd {
-  color: #b0b3bf;
-  font-weight: 500;
-}
-.sched-none {
-  color: #b0b3bf;
-  font-weight: 500;
-}
+/* 카드 상단 색(경쟁률 구간)과 톤을 맞춰, 표에서 본 색과 같은 언어로 강조색을 이어간다 */
+.interview-card.rate-blue    .key-date-box { background: #e7effd; }
+.interview-card.rate-blue    .key-date-label { color: #2158c9; }
+.interview-card.rate-magenta .key-date-box { background: #fce7f0; }
+.interview-card.rate-magenta .key-date-label { color: #b32e6b; }
+.interview-card.rate-orange  .key-date-box { background: #fdeee1; }
+.interview-card.rate-orange  .key-date-label { color: #c15a15; }
+.interview-card.rate-red     .key-date-box { background: #fbe6e6; }
+.interview-card.rate-red     .key-date-label { color: #b23434; }
 
-/* 면접평가일 · 합격자 발표처럼 가장 중요한 두 일정은 살짝 강조해 눈에 먼저 들어오게 한다 */
-.sched-row-highlight .sched-label { color: #4a3aa7; }
-.sched-row-highlight .sched-value { color: #1a1a2e; font-size: 14.5px; }
+/* 나머지 절차성 일정은 라벨 폭을 고정한 표 형태로 눌러 담아, 여러 카드를 훑어볼 때도
+   값이 항상 같은 위치에서 시작해 비교하기 쉽게 한다 (지그재그로 줄바꿈되던 문제 해결). */
+.interview-proc-list {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  row-gap: 7px;
+  column-gap: 10px;
+}
+.proc-row {
+  display: contents;
+}
+.proc-label {
+  font-size: 12px;
+  color: #999;
+  font-weight: 600;
+}
+.proc-value {
+  font-size: 12.5px;
+  color: #444;
+  font-weight: 500;
+  text-align: left;
+  line-height: 1.4;
+}
+.sched-tbd,
+.sched-none {
+  color: #c2c4cf;
+  font-weight: 500;
+}
 
 .interview-note {
   font-size: 12.5px;

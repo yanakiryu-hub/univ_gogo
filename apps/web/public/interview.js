@@ -48,30 +48,35 @@ function renderCards(rows) {
 
           ${statsHtml}
 
-          <div class="interview-schedule">
-            <div class="sched-row">
-              <span class="sched-label">1차 합격자 발표</span>
-              <span class="sched-value">${fmtSchedule(info.step1Announce)}</span>
+          <!-- 가장 궁금해할 두 날짜(면접평가일/합격자 발표)를 큼직하게 먼저 보여주고,
+               나머지 절차성 정보는 작은 글씨의 목록으로 아래에 배치해 시각적 위계를 나눈다. -->
+          <div class="interview-key-dates">
+            <div class="key-date-box">
+              <span class="key-date-label">면접평가일</span>
+              <span class="key-date-value">${fmtSchedule(info.interviewDate)}</span>
             </div>
-            <div class="sched-row">
-              <span class="sched-label">2단계 전형료 납부</span>
-              <span class="sched-value">${fmtSchedule(info.step2Payment)}</span>
+            <div class="key-date-box">
+              <span class="key-date-label">합격자 발표</span>
+              <span class="key-date-value">${fmtSchedule(info.finalAnnounce)}</span>
             </div>
-            <div class="sched-row">
-              <span class="sched-label">시험장 안내</span>
-              <span class="sched-value">${fmtSchedule(info.examRoomNotice)}</span>
+          </div>
+
+          <div class="interview-proc-list">
+            <div class="proc-row">
+              <span class="proc-label">1차 합격자 발표</span>
+              <span class="proc-value">${fmtSchedule(info.step1Announce)}</span>
             </div>
-            <div class="sched-row sched-row-highlight">
-              <span class="sched-label">면접평가일</span>
-              <span class="sched-value">${fmtSchedule(info.interviewDate)}</span>
+            <div class="proc-row">
+              <span class="proc-label">2단계 전형료 납부</span>
+              <span class="proc-value">${fmtSchedule(info.step2Payment)}</span>
             </div>
-            <div class="sched-row sched-row-highlight">
-              <span class="sched-label">합격자 발표</span>
-              <span class="sched-value">${fmtSchedule(info.finalAnnounce)}</span>
+            <div class="proc-row">
+              <span class="proc-label">시험장 안내</span>
+              <span class="proc-value">${fmtSchedule(info.examRoomNotice)}</span>
             </div>
-            <div class="sched-row">
-              <span class="sched-label">추가 합격자 발표</span>
-              <span class="sched-value">${fmtSchedule(info.additionalAnnounce)}</span>
+            <div class="proc-row">
+              <span class="proc-label">추가 합격자 발표</span>
+              <span class="proc-value">${fmtSchedule(info.additionalAnnounce)}</span>
             </div>
           </div>
 
