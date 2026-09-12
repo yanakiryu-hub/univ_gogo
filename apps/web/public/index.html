@@ -3,34 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>univ_gogo - 27학년도 수시 경쟁률</title>
+  <title>univ_gogo - 면접대비</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <header>
     <div>
-      <h1>univ_gogo — 27학년도 수시 경쟁률</h1>
+      <h1>univ_gogo — 면접대비</h1>
       <div class="meta" id="last-updated">마지막 업데이트: 불러오는 중...</div>
-    </div>
-    <div class="controls">
-      <span id="crawl-status"></span>
-      <button id="btn-run" class="btn-run">RUN</button>
-      <button id="btn-stop" class="btn-stop">STOP</button>
     </div>
   </header>
 
   <nav class="site-nav">
-    <a href="/" class="active">경쟁률 메인</a>
+    <a href="/" class="active">면접대비</a>
+    <a href="/ratio.html">경쟁률 메인</a>
     <a href="/board.html">경쟁률보드</a>
-    <a href="/interview.html">면접대비</a>
   </nav>
 
-  <main id="app">
-    <div class="empty">불러오는 중...</div>
+  <main>
+    <div class="badge-key" style="margin-bottom:16px;">
+      <span class="badge badge-blue">5:1↑</span>
+      <span class="badge badge-magenta">10:1↑</span>
+      <span class="badge badge-orange">20:1↑</span>
+      <span class="badge badge-red">30:1↑</span>
+    </div>
+
+    <div id="interview-cards" class="interview-grid">
+      <div class="empty">불러오는 중...</div>
+    </div>
   </main>
 
   <script src="/badges.js"></script>
-  <script src="/prevYearRatio.js"></script>
-  <script src="/app.js"></script>
+  <script src="/interviewInfo.js"></script>
+  <script src="/interview.js"></script>
 </body>
 </html>

@@ -498,6 +498,14 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   color: #b0b3bf;
   font-weight: 500;
 }
+.sched-none {
+  color: #b0b3bf;
+  font-weight: 500;
+}
+
+/* 면접평가일 · 합격자 발표처럼 가장 중요한 두 일정은 살짝 강조해 눈에 먼저 들어오게 한다 */
+.sched-row-highlight .sched-label { color: #4a3aa7; }
+.sched-row-highlight .sched-value { color: #1a1a2e; font-size: 14.5px; }
 
 .interview-note {
   font-size: 12.5px;
@@ -508,6 +516,15 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   padding: 8px 12px;
   line-height: 1.5;
 }
+
+.interview-homepage-link {
+  align-self: flex-start;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2158c9;
+  text-decoration: none;
+}
+.interview-homepage-link:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
   .interview-grid { grid-template-columns: 1fr; }

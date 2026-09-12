@@ -8,6 +8,7 @@ function fmt(dt) {
 
 function fmtSchedule(value) {
   if (!value) return '<span class="sched-tbd">미정</span>';
+  if (value === "없음") return '<span class="sched-none">없음</span>';
   return value;
 }
 
@@ -50,19 +51,32 @@ function renderCards(rows) {
           <div class="interview-schedule">
             <div class="sched-row">
               <span class="sched-label">1차 합격자 발표</span>
-              <span class="sched-value">${fmtSchedule(info.firstAnnounce)}</span>
+              <span class="sched-value">${fmtSchedule(info.step1Announce)}</span>
             </div>
             <div class="sched-row">
-              <span class="sched-label">면접일시</span>
-              <span class="sched-value">${fmtSchedule(info.interviewAt)}</span>
+              <span class="sched-label">2단계 전형료 납부</span>
+              <span class="sched-value">${fmtSchedule(info.step2Payment)}</span>
             </div>
             <div class="sched-row">
-              <span class="sched-label">최종 발표</span>
+              <span class="sched-label">시험장 안내</span>
+              <span class="sched-value">${fmtSchedule(info.examRoomNotice)}</span>
+            </div>
+            <div class="sched-row sched-row-highlight">
+              <span class="sched-label">면접평가일</span>
+              <span class="sched-value">${fmtSchedule(info.interviewDate)}</span>
+            </div>
+            <div class="sched-row sched-row-highlight">
+              <span class="sched-label">합격자 발표</span>
               <span class="sched-value">${fmtSchedule(info.finalAnnounce)}</span>
+            </div>
+            <div class="sched-row">
+              <span class="sched-label">추가 합격자 발표</span>
+              <span class="sched-value">${fmtSchedule(info.additionalAnnounce)}</span>
             </div>
           </div>
 
           ${info.note ? `<div class="interview-note">${info.note}</div>` : ""}
+          ${info.homepageUrl ? `<a class="interview-homepage-link" href="${info.homepageUrl}" target="_blank" rel="noopener">입학처 홈페이지 &rarr;</a>` : ""}
         </div>
       `;
     })
