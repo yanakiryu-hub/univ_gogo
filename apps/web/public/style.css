@@ -448,8 +448,9 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
 
 .interview-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px 6px;
   padding: 12px 0;
   border-top: 1px solid #f0f1f5;
   border-bottom: 1px solid #f0f1f5;
@@ -464,6 +465,8 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   font-size: 11px;
   color: #999;
   font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 .interview-stats .stat-value {
   font-size: 16px;

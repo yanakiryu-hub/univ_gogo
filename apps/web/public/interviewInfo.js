@@ -8,6 +8,7 @@ const INTERVIEW_INFO = [
   {
     university: "숙명여자대학교",
     department: "일본학과",
+    multiplier: 4, // 1차(서류) 합격 배수: 모집인원의 4배수를 면접 대상으로 선발
     homepageUrl: "https://admission.sookmyung.ac.kr/admission/html/main/main.asp",
     step1Announce: "11월 19일(목) 18시",
     step2Payment: "11월 20일(금) 17시 (25,000원)",
@@ -20,6 +21,7 @@ const INTERVIEW_INFO = [
   {
     university: "한국외국어대학교",
     department: "태국학과",
+    multiplier: 3,
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
     step1Announce: "11월 16일(월)",
     step2Payment: "없음 (1차 탈락시 10,000원 환불됨)",
@@ -32,6 +34,7 @@ const INTERVIEW_INFO = [
   {
     university: "숭실대학교",
     department: "일어일문",
+    multiplier: 3,
     homepageUrl: "https://iphak.ssu.ac.kr/",
     step1Announce: "11월 23일(월)",
     step2Payment: "없음 (1차 탈락시 20,000원 환불됨)",
@@ -44,6 +47,7 @@ const INTERVIEW_INFO = [
   {
     university: "건국대학교(서울)",
     department: "일어교육과",
+    multiplier: 3,
     homepageUrl: "https://www.konkuk.ac.kr/admission/37857/subview.do",
     step1Announce: "11월 20일(금) 14시",
     step2Payment: "11월 23일(월) 14시 (25,000원)",
@@ -56,6 +60,7 @@ const INTERVIEW_INFO = [
   {
     university: "국민대학교",
     department: "동아시아국제학부",
+    multiplier: 3,
     homepageUrl: null,
     step1Announce: "11월 17일(화) 14시",
     step2Payment: "없음 (1차 탈락시 20,000원 환불됨)",
@@ -68,6 +73,7 @@ const INTERVIEW_INFO = [
   {
     university: "한국외국어대학교",
     department: "이란학과",
+    multiplier: null, // 서류형은 1차/2차 배수 구분이 없어 1차 경쟁률 계산 대상에서 제외
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
     step1Announce: "없음",
     step2Payment: "없음",
@@ -83,6 +89,7 @@ function getInterviewInfo(university, department) {
   const uni = (university || "").replace(/\s*U$/, "").trim();
   return (
     INTERVIEW_INFO.find((e) => e.university === uni && department.includes(e.department)) || {
+      multiplier: null,
       homepageUrl: null,
       step1Announce: null,
       step2Payment: null,

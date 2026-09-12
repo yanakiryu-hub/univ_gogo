@@ -12,6 +12,16 @@ function fmtSchedule(value) {
   return value;
 }
 
+/**
+ * 1차(서류) 경쟁률: 지원인원을 "모집인원 × 1차 합격 배수" 로 나눈 값.
+ * 실제로 면접까지 올라가는 좁은 문 기준의 체감 경쟁률을 보여준다.
+ * 배수 정보가 없는 전형(예: 서류형 단일 평가)은 계산하지 않는다.
+ */
+function stage1Ratio(applicants, capacity, multiplier) {
+  if (!multiplier || !capacity || applicants === null || applicants === undefined) return null;
+  return applicants / (capacity * multiplier);
+}
+
 function renderCards(rows) {
   const coreRows = rows.filter((r) => r.core);
 
@@ -25,6 +35,9 @@ function renderCards(rows) {
       const info = getInterviewInfo(r.university, r.department);
       const rateClass = r.status === "ready" ? ratioColorClass(r.ratio) : "";
 
+      const ratio1 = r.status === "ready" ? stage1Ratio(r.applicants, r.capacity, info.multiplier) : null;
+      const stage1Label = info.multiplier ? `1차 경쟁률 (${info.multiplier}배수)` : "1차 경쟁률";
+
       const statsHtml =
         r.status === "ready"
           ? `
@@ -32,6 +45,9 @@ function renderCards(rows) {
               <div class="stat"><span class="stat-label">모집인원</span><span class="stat-value">${r.capacityRaw ?? "-"}</span></div>
               <div class="stat"><span class="stat-label">지원인원</span><span class="stat-value">${r.applicants ?? "-"}</span></div>
               <div class="stat"><span class="stat-label">경쟁률</span>${ratioBadgeHtml(r.ratio)}</div>
+              <div class="stat"><span class="stat-label">${stage1Label}</span>${
+              ratio1 !== null ? ratioBadgeHtml(ratio1) : '<span class="badge badge-neutral">해당없음</span>'
+            }</div>
             </div>
           `
           : `<div class="interview-stats"><span class="pending-note">대기중</span></div>`;
@@ -48,24 +64,20 @@ function renderCards(rows) {
 
           ${statsHtml}
 
-          <!-- 가장 궁금해할 두 날짜(면접평가일/합격자 발표)를 큼직하게 먼저 보여주고,
+          <!-- 가장 궁금해할 두 날짜(1차 합격자 발표/면접평가일)를 큼직하게 먼저 보여주고,
                나머지 절차성 정보는 작은 글씨의 목록으로 아래에 배치해 시각적 위계를 나눈다. -->
           <div class="interview-key-dates">
+            <div class="key-date-box">
+              <span class="key-date-label">1차 합격자 발표</span>
+              <span class="key-date-value">${fmtSchedule(info.step1Announce)}</span>
+            </div>
             <div class="key-date-box">
               <span class="key-date-label">면접평가일</span>
               <span class="key-date-value">${fmtSchedule(info.interviewDate)}</span>
             </div>
-            <div class="key-date-box">
-              <span class="key-date-label">합격자 발표</span>
-              <span class="key-date-value">${fmtSchedule(info.finalAnnounce)}</span>
-            </div>
           </div>
 
           <div class="interview-proc-list">
-            <div class="proc-row">
-              <span class="proc-label">1차 합격자 발표</span>
-              <span class="proc-value">${fmtSchedule(info.step1Announce)}</span>
-            </div>
             <div class="proc-row">
               <span class="proc-label">2단계 전형료 납부</span>
               <span class="proc-value">${fmtSchedule(info.step2Payment)}</span>
@@ -73,6 +85,10 @@ function renderCards(rows) {
             <div class="proc-row">
               <span class="proc-label">시험장 안내</span>
               <span class="proc-value">${fmtSchedule(info.examRoomNotice)}</span>
+            </div>
+            <div class="proc-row">
+              <span class="proc-label">합격자 발표</span>
+              <span class="proc-value">${fmtSchedule(info.finalAnnounce)}</span>
             </div>
             <div class="proc-row">
               <span class="proc-label">추가 합격자 발표</span>
