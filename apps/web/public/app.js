@@ -117,5 +117,6 @@ btnStop.addEventListener("click", async () => {
   await loadState();
 });
 
+// 9/11 20:00 KST 수시 접수 종료 이후로는 데이터가 더 이상 바뀌지 않으므로,
+// 최초 1회만 불러오고 주기적 자동 새로고침은 하지 않는다.
 loadState();
-setInterval(loadState, 15000);

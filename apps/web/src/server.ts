@@ -206,9 +206,31 @@ app.post("/api/ingest/selection", async (req, res) => {
   }
 });
 
+/**
+ * 수시 접수 종료(9/11 20:00 KST) 이후에도 남아있던 스냅샷을 정리하기 위한 일회성 관리자 엔드포인트.
+ * cutoff 이후 시각의 RatioSnapshot을 모두 삭제한다. 정리가 끝나면 이 라우트는 제거할 예정.
+ */
+app.post("/api/admin/cleanup-snapshots", async (req, res) => {
+  const secret = process.env.INGEST_SECRET;
+  if (!secret || req.get("x-ingest-secret") !== secret) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+
+  const cutoff = req.body?.cutoff ? new Date(req.body.cutoff) : null;
+  if (!cutoff || Number.isNaN(cutoff.getTime())) {
+    res.status(400).json({ error: "invalid cutoff" });
+    return;
+  }
+
+  const result = await prisma.ratioSnapshot.deleteMany({
+    where: { capturedAt: { gt: cutoff } },
+  });
+  res.json({ ok: true, deletedCount: result.count, cutoff: cutoff.toISOString() });
+});
+
 app.listen(PORT, () => {
   console.log(`univ_gogo web running at http://localhost:${PORT}`);
-  // 사람이 RUN을 누르지 않아도 서버가 켜지면 자동으로 크롤링 루프를 시작한다.
-  // 실제 크롤링 여부는 runner.ts의 시작/종료 시각(9/8 10:00 ~ 9/11 20:00 KST)에 따라 알아서 결정됨.
-  startCrawlLoop();
+  // 9/11 20:00 KST 수시 접수 종료로 더 이상 크롤링할 필요가 없어, 서버 부팅 시 자동 시작을 껐다.
+  // (필요하면 /api/crawl/start로 수동 시작 가능)
 });
