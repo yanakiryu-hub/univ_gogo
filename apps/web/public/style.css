@@ -394,3 +394,122 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   font-size: 13px;
   color: #c9cbe0;
 }
+
+/* ---------- 면접대비 페이지: 학교별 카드 ---------- */
+.interview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.interview-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 18px 20px;
+  border-top: 4px solid #d8dae2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* 경쟁률 구간 색을 카드 상단 스트라이프로 그대로 반영해, 표에서 보던 색과 같은 언어로 위험도를 전달 */
+.interview-card.rate-blue    { border-top-color: #2158c9; }
+.interview-card.rate-magenta { border-top-color: #b32e6b; }
+.interview-card.rate-orange  { border-top-color: #c15a15; }
+.interview-card.rate-red     { border-top-color: #b23434; }
+
+.interview-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.interview-univ {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+.interview-dept {
+  font-size: 13px;
+  color: #777;
+  margin-top: 2px;
+}
+.interview-type-badge {
+  flex: none;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4a3aa7;
+  background: #ece9fa;
+  border-radius: 999px;
+  padding: 4px 10px;
+  text-align: right;
+  max-width: 45%;
+}
+
+.interview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid #f0f1f5;
+  border-bottom: 1px solid #f0f1f5;
+}
+.interview-stats .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.interview-stats .stat-label {
+  font-size: 11px;
+  color: #999;
+  font-weight: 600;
+}
+.interview-stats .stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #1a1a2e;
+}
+
+.interview-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sched-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+}
+.sched-label {
+  color: #888;
+  font-weight: 600;
+  flex: none;
+}
+.sched-value {
+  color: #1a1a2e;
+  font-weight: 600;
+  text-align: right;
+}
+.sched-tbd {
+  color: #b0b3bf;
+  font-weight: 500;
+}
+
+.interview-note {
+  font-size: 12.5px;
+  color: #916a00;
+  background: #fff8e6;
+  border: 1px solid #f5e6b8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .interview-grid { grid-template-columns: 1fr; }
+  .interview-card { padding: 16px; }
+}
