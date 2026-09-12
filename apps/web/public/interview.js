@@ -13,6 +13,19 @@ function fmtSchedule(value) {
 }
 
 /**
+ * 핵심 강조 박스(1차 합격자 발표/면접평가일) 전용 포맷터.
+ * 날짜는 그대로 두고, 뒤에 붙는 "18시" 같은 시각 표기만 작고 옅은 글자로 줄여
+ * 날짜가 먼저 눈에 들어오게 한다.
+ */
+function fmtKeyDate(value) {
+  if (!value) return '<span class="sched-tbd">미정</span>';
+  if (value === "없음") return '<span class="sched-none">없음</span>';
+  const match = value.match(/^(.*?)(\s\d{1,2}시)$/);
+  if (!match) return value;
+  return `${match[1]}<span class="key-date-time">${match[2]}</span>`;
+}
+
+/**
  * 1차(서류) 경쟁률: 지원인원을 "모집인원 × 1차 합격 배수" 로 나눈 값.
  * 실제로 면접까지 올라가는 좁은 문 기준의 체감 경쟁률을 보여준다.
  * 배수 정보가 없는 전형(예: 서류형 단일 평가)은 계산하지 않는다.
@@ -73,11 +86,11 @@ function renderCards(rows) {
           <div class="interview-key-dates">
             <div class="key-date-box">
               <span class="key-date-label">1차 합격자 발표</span>
-              <span class="key-date-value">${fmtSchedule(info.step1Announce)}</span>
+              <span class="key-date-value">${fmtKeyDate(info.step1Announce)}</span>
             </div>
             <div class="key-date-box">
               <span class="key-date-label">면접평가일</span>
-              <span class="key-date-value">${fmtSchedule(info.interviewDate)}</span>
+              <span class="key-date-value">${fmtKeyDate(info.interviewDate)}</span>
             </div>
           </div>
 
