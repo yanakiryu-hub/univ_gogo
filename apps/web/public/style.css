@@ -516,7 +516,7 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
    값이 항상 같은 위치에서 시작해 비교하기 쉽게 한다 (지그재그로 줄바꿈되던 문제 해결). */
 .interview-proc-list {
   display: grid;
-  grid-template-columns: 108px 1fr;
+  grid-template-columns: 100px 1fr;
   row-gap: 7px;
   column-gap: 10px;
 }
@@ -524,14 +524,16 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   display: contents;
 }
 .proc-label {
-  font-size: 12px;
+  font-size: 11.5px;
   color: #999;
   font-weight: 600;
 }
+/* 날짜/시간 값이 길어 줄바꿈되면서 레이아웃이 틀어지던 문제라, 글자를 조금 줄이고
+   눈에 띄는 색을 줘서 작아진 만큼 오히려 더 잘 읽히게 한다 */
 .proc-value {
-  font-size: 12.5px;
-  color: #444;
-  font-weight: 500;
+  font-size: 11px;
+  color: #3451b2;
+  font-weight: 700;
   text-align: left;
   line-height: 1.4;
 }
