@@ -226,7 +226,49 @@ app.post("/api/admin/cleanup-snapshots", async (req, res) => {
   const result = await prisma.ratioSnapshot.deleteMany({
     where: { capturedAt: { gt: cutoff } },
   });
-  res.json({ ok: true, deletedCount: result.count, cutoff: cutoff.toISOString() });
+
+  // RatioSnapshot 삭제만으로는 Department/AdmissionType에 박혀있는 "현재값"(cutoff 이후 값)이
+  // 그대로 남으므로, 각 학과의 남은 스냅샷 중 가장 최근 값으로 되돌린다.
+  const departments = await prisma.department.findMany({
+    include: { snapshots: { orderBy: { capturedAt: "desc" }, take: 1 } },
+  });
+  let departmentsFixed = 0;
+  for (const d of departments) {
+    const latest = d.snapshots[0];
+    if (!latest) continue;
+    if (d.ratio !== latest.ratio || d.applicants !== latest.applicants) {
+      await prisma.department.update({
+        where: { id: d.id },
+        data: { ratio: latest.ratio, applicants: latest.applicants },
+      });
+      departmentsFixed++;
+    }
+  }
+
+  const admissionTypes = await prisma.admissionType.findMany({
+    include: { departments: { include: { snapshots: { orderBy: { capturedAt: "desc" }, take: 1 } } } },
+  });
+  let admissionTypesFixed = 0;
+  for (const at of admissionTypes) {
+    const latestCapturedAt = at.departments.reduce<Date | null>((max, d) => {
+      const c = d.snapshots[0]?.capturedAt;
+      if (!c) return max;
+      if (!max || c > max) return c;
+      return max;
+    }, null);
+    if (latestCapturedAt && latestCapturedAt.getTime() !== at.capturedAt.getTime() && latestCapturedAt <= cutoff) {
+      await prisma.admissionType.update({ where: { id: at.id }, data: { capturedAt: latestCapturedAt } });
+      admissionTypesFixed++;
+    }
+  }
+
+  res.json({
+    ok: true,
+    deletedCount: result.count,
+    departmentsFixed,
+    admissionTypesFixed,
+    cutoff: cutoff.toISOString(),
+  });
 });
 
 app.listen(PORT, () => {
