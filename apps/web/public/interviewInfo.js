@@ -10,6 +10,7 @@ const INTERVIEW_INFO = [
     department: "일본학과",
     multiplier: 4, // 1차(서류) 합격 배수: 모집인원의 4배수를 면접 대상으로 선발
     homepageUrl: "https://admission.sookmyung.ac.kr/admission/html/main/main.asp",
+    locationUrl: "https://kko.to/AgLxS1Y_CY",
     step1Announce: "11월 19일(목) 18시",
     step1SortKey: 1119,
     step2Payment: "11월 20일(금) 17시 (25,000원)",
@@ -26,6 +27,7 @@ const INTERVIEW_INFO = [
     department: "태국학과",
     multiplier: 3,
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
+    locationUrl: "https://kko.to/7rYXtPQjA5",
     step1Announce: "11월 16일(월)",
     step1SortKey: 1116,
     step2Payment: "없음 (1차 탈락시 10,000원 환불됨)",
@@ -42,6 +44,7 @@ const INTERVIEW_INFO = [
     department: "일어일문",
     multiplier: 3,
     homepageUrl: "https://iphak.ssu.ac.kr/",
+    locationUrl: "https://kko.to/vMKOBL4M54",
     step1Announce: "11월 23일(월)",
     step1SortKey: 1123,
     step2Payment: "없음 (1차 탈락시 20,000원 환불됨)",
@@ -58,6 +61,7 @@ const INTERVIEW_INFO = [
     department: "일어교육과",
     multiplier: 3,
     homepageUrl: "https://www.konkuk.ac.kr/admission/37857/subview.do",
+    locationUrl: "https://kko.to/jMsX1xhZrt",
     step1Announce: "11월 20일(금) 14시",
     step1SortKey: 1120,
     step2Payment: "11월 23일(월) 14시 (25,000원)",
@@ -74,6 +78,7 @@ const INTERVIEW_INFO = [
     department: "동아시아국제학부",
     multiplier: 3,
     homepageUrl: null,
+    locationUrl: "https://kko.to/3a8uR6AjKE",
     step1Announce: "11월 17일(화) 14시",
     step1SortKey: 1117,
     step2Payment: "없음 (1차 탈락시 20,000원 환불됨)",
@@ -90,6 +95,7 @@ const INTERVIEW_INFO = [
     department: "이란학과",
     multiplier: null, // 서류형은 1차/2차 배수 구분이 없어 1차 경쟁률 계산 대상에서 제외
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
+    locationUrl: "https://kko.to/7rYXtPQjA5",
     step1Announce: "없음",
     step1SortKey: Infinity, // 서류형은 1차 발표가 없어 정렬상 항상 맨 뒤로 보낸다
     step2Payment: "없음",
@@ -109,6 +115,7 @@ function getInterviewInfo(university, department) {
     INTERVIEW_INFO.find((e) => e.university === uni && department.includes(e.department)) || {
       multiplier: null,
       homepageUrl: null,
+      locationUrl: null,
       step1Announce: null,
       step1SortKey: Infinity,
       step2Payment: null,

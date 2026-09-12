@@ -553,14 +553,21 @@ svg.trend-chart .crosshair { stroke: #b7b9c6; stroke-width: 1; stroke-dasharray:
   line-height: 1.5;
 }
 
-.interview-homepage-link {
-  align-self: flex-start;
+.interview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+.interview-homepage-link,
+.interview-location-link {
   font-size: 12.5px;
   font-weight: 600;
-  color: #2158c9;
   text-decoration: none;
 }
-.interview-homepage-link:hover { text-decoration: underline; }
+.interview-homepage-link { color: #2158c9; }
+.interview-location-link { color: #1baf7a; }
+.interview-homepage-link:hover,
+.interview-location-link:hover { text-decoration: underline; }
 
 /* 서류/면접 배점 안내 — 카드 맨 아래, 절차 일정과는 톤을 달리해(짙은 배경) 구분되는
    "참고 자료" 임을 알리고, 라벨을 고정 폭으로 정렬해 두 값이 나란히 비교되게 한다 */
