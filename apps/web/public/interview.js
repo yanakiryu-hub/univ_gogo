@@ -4,7 +4,7 @@ const viewToggleBtn = document.getElementById("view-toggle-btn");
 const viewToggleLabel = document.getElementById("view-toggle-label");
 
 const VIEW_MODE_KEY = "univgogo_interview_view_mode";
-let viewMode = localStorage.getItem(VIEW_MODE_KEY) === "carousel" ? "carousel" : "grid";
+let viewMode = localStorage.getItem(VIEW_MODE_KEY) === "grid" ? "grid" : "carousel";
 let lastRows = [];
 
 function fmt(dt) {
