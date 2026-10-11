@@ -1,6 +1,6 @@
 {
   "framework": null,
   "installCommand": "",
-  "buildCommand": "mkdir -p dist && cp -R public/. dist/",
+  "buildCommand": "pwd; ls -la; mkdir -p dist; for d in public apps/web/public ../../public; do if [ -f \"$d/index.html\" ]; then echo \"using $d\"; cp -R \"$d\"/. dist/; break; fi; done; ls -la dist; test -f dist/index.html",
   "outputDirectory": "dist"
 }
