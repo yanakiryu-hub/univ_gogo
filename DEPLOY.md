@@ -1,50 +1,30 @@
-# Railway 배포 가이드
+# 배포 가이드 (Vercel)
 
-이 앱은 SQLite 파일 + 서버 프로세스 내부 타이머(크롤링 RUN/STOP)로 동작하는 **장시간 실행 프로세스**라, Vercel 같은 서버리스 플랫폼과는 맞지 않는다. Railway처럼 Node 서버를 계속 띄워두고 영구 디스크(Volume)를 붙일 수 있는 플랫폼을 쓴다.
+이 사이트는 빌드할 것이 없는 **정적 사이트**라 Vercel 무료(Hobby) 플랜으로 충분하다.
 
-## 준비된 것 (코드 쪽)
+## 동작 방식
 
-- 루트 `package.json`에 `build`(Prisma client 생성) / `start`(DB 스키마 반영 후 웹서버 실행) 스크립트 추가
-- `packages/db`의 Prisma client가 `DATABASE_URL` 환경변수를 우선 사용하도록 되어 있음 (없으면 로컬 개발용 상대경로로 fallback)
-- `apps/web`이 `process.env.PORT`를 그대로 사용 — Railway가 주입하는 포트에 자동으로 맞춰짐
+- `vercel.json`의 빌드 명령이 `public/`의 파일을 `dist/`로 복사하고, `dist/`를 그대로 서빙한다.
+- 설치(install) 단계는 건너뛴다. 루트 `package.json`의 workspaces/Prisma 의존성은 사용하지 않는다.
+- GitHub `main` 브랜치에 push 하면 자동으로 새로 배포된다.
 
-## 로그인/계정이 필요한 부분 (직접 진행해주셔야 함)
+## 처음 연결할 때
 
-Railway 계정 로그인·GitHub 연동·Volume 생성은 본인 계정으로만 할 수 있는 작업이라 아래 단계는 직접 진행해주세요.
+1. https://vercel.com 에서 GitHub 계정으로 로그인
+2. Add New → Project → `univ_gogo` 저장소 Import
+3. Framework Preset은 `Other`로 두고 설정은 건드리지 않은 채 Deploy
+   (필요한 설정은 모두 `vercel.json`에 있다)
 
-### 1. GitHub에 코드 올리기
+## 문제 해결
 
-로컬에서 git 저장소는 이미 초기화해뒀다. GitHub에 새 저장소를 만들고 푸시:
+- **404 NOT_FOUND**: 해당 배포의 Build Logs를 연다. `Skipping cache upload because no files were prepared`가 보이면
+  출력 폴더에 파일이 없다는 뜻이다. `vercel.json`의 `buildCommand`가 `public/index.html`을 찾아 `dist/`로
+  복사하는지 확인한다.
+- Settings → General의 Root Directory를 바꾸면 `public/` 경로가 달라질 수 있으니 비워두거나 저장소 루트로 둔다.
+- 배포 URL(`univ-gogo-xxxx-...vercel.app`)은 Vercel 로그인 보호가 걸려 302가 나올 수 있다.
+  공개 주소는 `univ-gogo.vercel.app`이다.
 
-```bash
-gh repo create univ-gogo --private --source=. --remote=origin --push
-```
+## 이전 배포 (참고)
 
-(`gh` CLI 로그인이 안 되어 있다면 `gh auth login` 먼저)
-
-### 2. Railway 프로젝트 생성 및 GitHub 연동
-
-1. https://railway.app 에서 로그인 (GitHub 계정으로 로그인 추천)
-2. "New Project" → "Deploy from GitHub repo" → 방금 만든 `univ-gogo` 저장소 선택
-3. Railway가 자동으로 Node 프로젝트로 인식하고, 루트의 `build`/`start` 스크립트를 사용해서 빌드·실행함
-
-### 3. 영구 디스크(Volume) 추가 — 이거 안 하면 재배포할 때마다 크롤링 데이터가 사라짐
-
-1. Railway 서비스 → "Settings" → "Volumes" → "New Volume"
-2. Mount path를 `/data`로 설정
-3. 서비스 → "Variables"에 아래 환경변수 추가:
-   ```
-   DATABASE_URL=file:/data/dev.db
-   ```
-
-### 4. 배포 확인
-
-Railway가 배포를 마치면 "Settings" → "Networking"에서 공개 도메인을 발급받을 수 있다 (`xxx.up.railway.app` 형태, 무료). 그 URL로 접속해서 대시보드가 뜨는지 확인.
-
-첫 배포 직후에는 DB가 비어있는 게 정상 — 사이트에서 **RUN** 버튼을 눌러야 크롤링이 시작된다.
-
-## 참고
-
-- Railway 무료 플랜은 일정 시간 트래픽이 없으면 서비스가 슬립될 수 있다. 슬립되면 RUN으로 켜둔 크롤링 루프도 같이 멈춘다 — 계속 돌려두려면 유료 플랜이나 다른 상시구동 플랫폼이 필요하다.
-- `apps/crawler/src/targets.ts`에 등록된 대학/전형/학과 목록은 배포 후에도 코드 수정 → 재배포로만 바꿀 수 있다 (UI에서 편집하는 기능은 아직 없음).
-- 이 저장소는 npm workspaces 모노레포라 Railway가 루트에서 `npm install`을 실행해야 한다 (서비스 Root Directory를 `apps/web` 등으로 바꾸지 말 것).
+경쟁률 수집 기간에는 Railway에서 Express 서버 + SQLite 볼륨으로 운영했다.
+기능을 종료하고 Railway 체험도 끝나 Vercel 정적 사이트로 옮겼다.
