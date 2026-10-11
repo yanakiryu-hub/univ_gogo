@@ -9,6 +9,9 @@ const INTERVIEW_INFO = [
     university: "숙명여자대학교",
     department: "일본학과",
     admissionType: "숙명인재(면접형)",
+    finalCapacity: 16, // 접수 마감 시점 모집인원
+    finalApplicants: 177, // 최종 지원인원
+    finalRatio: 11.06, // 최종 경쟁률(:1)
     multiplier: 4, // 1차(서류) 합격 배수: 모집인원의 4배수를 면접 대상으로 선발
     homepageUrl: "https://admission.sookmyung.ac.kr/admission/html/main/main.asp",
     locationUrl: "https://kko.to/AgLxS1Y_CY",
@@ -27,6 +30,9 @@ const INTERVIEW_INFO = [
     university: "한국외국어대학교",
     department: "태국학과",
     admissionType: "면접형",
+    finalCapacity: 5, // 접수 마감 시점 모집인원
+    finalApplicants: 37, // 최종 지원인원
+    finalRatio: 7.4, // 최종 경쟁률(:1)
     multiplier: 3,
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
     locationUrl: "https://kko.to/7rYXtPQjA5",
@@ -45,6 +51,9 @@ const INTERVIEW_INFO = [
     university: "숭실대학교",
     department: "일어일문",
     admissionType: "SSU미래인재(면접형)",
+    finalCapacity: 10, // 접수 마감 시점 모집인원
+    finalApplicants: 295, // 최종 지원인원
+    finalRatio: 29.5, // 최종 경쟁률(:1)
     multiplier: 3,
     homepageUrl: "https://iphak.ssu.ac.kr/",
     locationUrl: "https://kko.to/vMKOBL4M54",
@@ -63,6 +72,9 @@ const INTERVIEW_INFO = [
     university: "건국대학교(서울)",
     department: "일어교육과",
     admissionType: "KU자기추천",
+    finalCapacity: 19, // 접수 마감 시점 모집인원
+    finalApplicants: 175, // 최종 지원인원
+    finalRatio: 9.21, // 최종 경쟁률(:1)
     multiplier: 3,
     homepageUrl: "https://www.konkuk.ac.kr/admission/37857/subview.do",
     locationUrl: "https://kko.to/jMsX1xhZrt",
@@ -81,6 +93,9 @@ const INTERVIEW_INFO = [
     university: "국민대학교",
     department: "동아시아국제학부",
     admissionType: "국민프런티어",
+    finalCapacity: 25, // 접수 마감 시점 모집인원
+    finalApplicants: 297, // 최종 지원인원
+    finalRatio: 11.88, // 최종 경쟁률(:1)
     multiplier: 3,
     homepageUrl: "https://admission.kookmin.ac.kr/intro.html",
     locationUrl: "https://kko.to/3a8uR6AjKE",
@@ -99,6 +114,9 @@ const INTERVIEW_INFO = [
     university: "한국외국어대학교",
     department: "이란학과",
     admissionType: "서류형",
+    finalCapacity: 5, // 접수 마감 시점 모집인원
+    finalApplicants: 46, // 최종 지원인원
+    finalRatio: 9.2, // 최종 경쟁률(:1)
     multiplier: null, // 서류형은 1차/2차 배수 구분이 없어 1차 경쟁률 계산 대상에서 제외
     homepageUrl: "https://adms.hufs.ac.kr/index.do",
     locationUrl: "https://kko.to/7rYXtPQjA5",
@@ -120,6 +138,9 @@ function getInterviewInfo(university, department) {
   return (
     INTERVIEW_INFO.find((e) => e.university === uni && department.includes(e.department)) || {
       multiplier: null,
+      finalCapacity: null,
+      finalApplicants: null,
+      finalRatio: null,
       homepageUrl: null,
       locationUrl: null,
       step1Announce: null,

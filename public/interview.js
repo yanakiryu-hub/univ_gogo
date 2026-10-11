@@ -24,15 +24,45 @@ function fmtKeyDate(value) {
   return `${match[1]}<span class="key-date-time">${match[2]}</span>`;
 }
 
+function ratioClass(ratio) {
+  if (ratio === null || ratio === undefined) return "";
+  if (ratio >= 30) return "rate-red";
+  if (ratio >= 20) return "rate-orange";
+  if (ratio >= 10) return "rate-magenta";
+  if (ratio >= 5) return "rate-blue";
+  return "";
+}
+
+function ratioBadge(ratio) {
+  if (ratio === null || ratio === undefined) return '<span class="badge badge-neutral">-</span>';
+  const cls = ratioClass(ratio);
+  return `<span class="badge ${cls ? cls.replace("rate-", "badge-") : "badge-neutral"}">${ratio.toFixed(2)} : 1</span>`;
+}
+
+/** 1차 경쟁률: 최종 지원인원 ÷ (모집인원 × 1차 합격 배수). 배수 없는 서류형은 계산하지 않는다. */
+function stage1Ratio(info) {
+  if (!info.multiplier || !info.finalCapacity || info.finalApplicants == null) return null;
+  return info.finalApplicants / (info.finalCapacity * info.multiplier);
+}
+
 function buildCardHtml(info) {
   return `
-    <div class="interview-card">
+    <div class="interview-card ${ratioClass(info.finalRatio)}">
       <div class="interview-card-head">
         <div>
           <div class="interview-univ">${info.university}</div>
           <div class="interview-dept">${info.department}</div>
         </div>
         <span class="interview-type-badge">${info.admissionType}</span>
+      </div>
+
+      <div class="interview-stats">
+        <div class="stat"><span class="stat-label">모집인원</span><span class="stat-value">${info.finalCapacity ?? "-"}</span></div>
+        <div class="stat"><span class="stat-label">지원인원</span><span class="stat-value">${info.finalApplicants ?? "-"}</span></div>
+        <div class="stat"><span class="stat-label">최종 경쟁률</span>${ratioBadge(info.finalRatio)}</div>
+        <div class="stat"><span class="stat-label">1차 경쟁률${info.multiplier ? ` (${info.multiplier}배수)` : ""}</span>${
+          stage1Ratio(info) !== null ? ratioBadge(stage1Ratio(info)) : '<span class="badge badge-neutral">해당없음</span>'
+        }</div>
       </div>
 
       <!-- 가장 궁금해할 두 날짜(1차 합격자 발표/면접평가일)를 큼직하게 먼저 보여주고,
