@@ -1,16 +1,9 @@
-const lastUpdatedEl = document.getElementById("last-updated");
 const cardsEl = document.getElementById("interview-cards");
 const viewToggleBtn = document.getElementById("view-toggle-btn");
 const viewToggleLabel = document.getElementById("view-toggle-label");
 
 const VIEW_MODE_KEY = "univgogo_interview_view_mode";
 let viewMode = localStorage.getItem(VIEW_MODE_KEY) === "grid" ? "grid" : "carousel";
-let lastRows = [];
-
-function fmt(dt) {
-  if (!dt) return "-";
-  return new Date(dt).toLocaleString("ko-KR", { hour12: false, timeZone: "Asia/Seoul" });
-}
 
 function fmtSchedule(value) {
   if (!value) return '<span class="sched-tbd">미정</span>';
@@ -31,48 +24,16 @@ function fmtKeyDate(value) {
   return `${match[1]}<span class="key-date-time">${match[2]}</span>`;
 }
 
-/**
- * 1차(서류) 경쟁률: 지원인원을 "모집인원 × 1차 합격 배수" 로 나눈 값.
- * 실제로 면접까지 올라가는 좁은 문 기준의 체감 경쟁률을 보여준다.
- * 배수 정보가 없는 전형(예: 서류형 단일 평가)은 계산하지 않는다.
- */
-function stage1Ratio(applicants, capacity, multiplier) {
-  if (!multiplier || !capacity || applicants === null || applicants === undefined) return null;
-  return applicants / (capacity * multiplier);
-}
-
-function buildCardHtml(r) {
-  const info = getInterviewInfo(r.university, r.department);
-  const rateClass = r.status === "ready" ? ratioColorClass(r.ratio) : "";
-
-  const ratio1 = r.status === "ready" ? stage1Ratio(r.applicants, r.capacity, info.multiplier) : null;
-  const stage1Label = info.multiplier ? `1차 경쟁률 (${info.multiplier}배수)` : "1차 경쟁률";
-
-  const statsHtml =
-    r.status === "ready"
-      ? `
-        <div class="interview-stats">
-          <div class="stat"><span class="stat-label">모집인원</span><span class="stat-value">${r.capacityRaw ?? "-"}</span></div>
-          <div class="stat"><span class="stat-label">지원인원</span><span class="stat-value">${r.applicants ?? "-"}</span></div>
-          <div class="stat"><span class="stat-label">경쟁률</span>${ratioBadgeHtml(r.ratio)}</div>
-          <div class="stat"><span class="stat-label">${stage1Label}</span>${
-          ratio1 !== null ? ratioBadgeHtml(ratio1) : '<span class="badge badge-neutral">해당없음</span>'
-        }</div>
-        </div>
-      `
-      : `<div class="interview-stats"><span class="pending-note">대기중</span></div>`;
-
+function buildCardHtml(info) {
   return `
-    <div class="interview-card ${rateClass}">
+    <div class="interview-card">
       <div class="interview-card-head">
         <div>
-          <div class="interview-univ">${r.university}</div>
-          <div class="interview-dept">${r.department}</div>
+          <div class="interview-univ">${info.university}</div>
+          <div class="interview-dept">${info.department}</div>
         </div>
-        <span class="interview-type-badge">${r.admissionType}</span>
+        <span class="interview-type-badge">${info.admissionType}</span>
       </div>
-
-      ${statsHtml}
 
       <!-- 가장 궁금해할 두 날짜(1차 합격자 발표/면접평가일)를 큼직하게 먼저 보여주고,
            나머지 절차성 정보는 작은 글씨의 목록으로 아래에 배치해 시각적 위계를 나눈다. -->
@@ -138,10 +99,8 @@ function buildCardHtml(r) {
   `;
 }
 
-function sortedCoreRows(rows) {
-  return rows
-    .filter((r) => r.core)
-    .sort((a, b) => getInterviewInfo(a.university, a.department).step1SortKey - getInterviewInfo(b.university, b.department).step1SortKey);
+function sortedInfos() {
+  return [...INTERVIEW_INFO].sort((a, b) => a.step1SortKey - b.step1SortKey);
 }
 
 /* ---------------- 카드형 스와이프 뷰 ---------------- */
@@ -216,15 +175,14 @@ function renderGrid(coreRows) {
   cardsEl.innerHTML = coreRows.map((r) => buildCardHtml(r)).join("");
 }
 
-function renderCards(rows) {
+function renderCards() {
   if (carouselCleanup) {
     carouselCleanup();
     carouselCleanup = null;
   }
 
-  // 1차 합격자 발표가 빠른 순으로 카드를 배치하고, 서류형처럼 1차 발표 자체가 없는
-  // 전형(step1SortKey: Infinity)은 항상 맨 뒤로 보낸다.
-  const coreRows = sortedCoreRows(rows);
+  // 1차 합격자 발표가 빠른 순, 서류형(step1SortKey: Infinity)은 맨 뒤
+  const coreRows = sortedInfos();
 
   if (coreRows.length === 0) {
     cardsEl.className = "interview-grid";
@@ -253,23 +211,9 @@ viewToggleBtn.addEventListener("click", () => {
   viewMode = viewMode === "carousel" ? "grid" : "carousel";
   localStorage.setItem(VIEW_MODE_KEY, viewMode);
   updateToggleButton();
-  renderCards(lastRows);
+  renderCards();
 });
 
 updateToggleButton();
 
-async function load() {
-  const res = await fetch("/api/board");
-  const data = await res.json();
-  lastRows = data.rows;
-
-  const readyTimes = data.rows
-    .filter((r) => r.core && r.status === "ready")
-    .map((r) => new Date(r.capturedAt).getTime());
-  const last = readyTimes.length ? new Date(Math.max(...readyTimes)) : null;
-  lastUpdatedEl.textContent = `마지막 업데이트: ${fmt(last)}`;
-
-  renderCards(lastRows);
-}
-
-load();
+renderCards();

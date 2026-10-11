@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>univ_gogo - 면접대비</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <header>
     <div>
       <h1>univ_gogo — 면접대비</h1>
-      <div class="meta" id="last-updated">마지막 업데이트: 불러오는 중...</div>
+      <div class="meta">면접 일정 · 배점 · 위치 정리</div>
     </div>
     <button id="view-toggle-btn" class="view-toggle-btn" type="button" aria-label="보기 방식 전환">
       <svg class="view-toggle-icon icon-cards" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="14" height="16" rx="2" fill="currentColor" opacity="0.35"/><rect x="8" y="4" width="14" height="16" rx="2" fill="currentColor"/></svg>
@@ -19,27 +19,13 @@
     </button>
   </header>
 
-  <nav class="site-nav">
-    <a href="/" class="active">면접대비</a>
-    <a href="/ratio.html">경쟁률 메인</a>
-    <a href="/board.html">경쟁률보드</a>
-  </nav>
-
   <main>
-    <div class="badge-key" style="margin-bottom:16px;">
-      <span class="badge badge-blue">5:1↑</span>
-      <span class="badge badge-magenta">10:1↑</span>
-      <span class="badge badge-orange">20:1↑</span>
-      <span class="badge badge-red">30:1↑</span>
-    </div>
-
     <div id="interview-cards" class="interview-grid">
       <div class="empty">불러오는 중...</div>
     </div>
   </main>
 
-  <script src="/badges.js"></script>
-  <script src="/interviewInfo.js"></script>
-  <script src="/interview.js"></script>
+  <script src="./interviewInfo.js"></script>
+  <script src="./interview.js"></script>
 </body>
 </html>
